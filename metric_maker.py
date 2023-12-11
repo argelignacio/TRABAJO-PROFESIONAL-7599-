@@ -55,11 +55,11 @@ plt.savefig(f'METRICAS_{nombre}/distribucion_acum.png')
 
 metrics["mean_in"] = np.mean(in_degree_values)
 metrics["max_in"] = np.max(in_degree_values)
-metrics["min_in"] = np.max(in_degree_values)
+metrics["min_in"] = np.min(in_degree_values)
 
 metrics["mean_out"] = np.mean(out_degree_values)
 metrics["max_out"] = np.max(out_degree_values)
-metrics["min_out"] = np.max(out_degree_values)
+metrics["min_out"] = np.min(out_degree_values)
 
 out_degree_values = ""
 in_degree_values = ""
@@ -100,32 +100,35 @@ authority_scores_list = ""
 hits = ""
 gc.collect()
 
-# Katz
-print("Calculando Katz")
-katz = nx.katz_centrality(G, tol=1e-04)
-katz_score = list(katz.values())
+# # Katz
+# print("Calculando Katz")
+# katz = nx.katz_centrality(G, tol=1e-02)
+# katz_score = list(katz.values())
 
-metrics["mean_katz_score"] = np.mean(katz_score)
-metrics["min_katz_score"] = np.min(katz_score)
-metrics["max_katz_score"] = np.max(katz_score)
+# metrics["mean_katz_score"] = np.mean(katz_score)
+# metrics["min_katz_score"] = np.min(katz_score)
+# metrics["max_katz_score"] = np.max(katz_score)
 
-katz_score = ""
-katz = ""
-gc.collect()
+# katz_score = ""
+# katz = ""
+# gc.collect()
 
 
 # Metricas sobre columnas
 
+print("Calculando metricas sobre columnas")
+
 metrics["mean_value"] = edges["value"].mean()
 metrics["max_value"] = edges["value"].max()
-
+print("Calculando max_value")
 metrics["mean_nonce"] = edges["nonce"].mean()
 metrics["max_nonce"] = edges["nonce"].max()
 metrics["min_nonce"] = edges["nonce"].min()
-
+print("Calculando max_nonce")
 metrics["mean_gas"] = edges["gas"].mean()
 metrics["max_gas"] = edges["gas"].max()
 metrics["min_gas"] = edges["gas"].min()
+print("Calculando max_gas")
 
 
 nombre = os.path.splitext(nombre_archivo)[0]
