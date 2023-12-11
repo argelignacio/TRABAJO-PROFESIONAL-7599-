@@ -118,6 +118,7 @@ gc.collect()
 
 print("Calculando metricas sobre columnas")
 
+edges["value"] = edges["value"].astype(float)
 metrics["mean_value"] = edges["value"].mean()
 metrics["max_value"] = edges["value"].max()
 print("Calculando max_value")
