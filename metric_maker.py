@@ -67,6 +67,7 @@ gc.collect()
 
 
 # PageRank
+print("Calculando PageRank")
 pagerank = nx.pagerank(G)
 pagerank_for_metrics = list(pagerank.values())
 
@@ -79,6 +80,7 @@ pagerank_for_metrics = ""
 gc.collect()
 
 # HITS
+print("Calculando HITS")
 hits = nx.hits(G)
 hub_scores, authority_scores = hits
 
@@ -99,7 +101,8 @@ hits = ""
 gc.collect()
 
 # Katz
-katz = nx.katz_centrality(G)
+print("Calculando Katz")
+katz = nx.katz_centrality(G, tol=1e-04)
 katz_score = list(katz.values())
 
 metrics["mean_katz_score"] = np.mean(katz_score)
