@@ -15,7 +15,10 @@ if len(sys.argv) < 2:
 
 nombre_archivo = sys.argv[1]
 
+nombre = os.path.splitext(nombre_archivo)[0]
 
+ruta_completa = os.path.join(os.getcwd(), "METRICAS_"+nombre)
+os.mkdir(ruta_completa)
 
 edges = pd.read_csv(nombre_archivo, usecols=['from_address', 'to_address'])
 G = nx.from_pandas_edgelist(edges, source='from_address', target='to_address', create_using=nx.DiGraph())
@@ -45,7 +48,7 @@ plt.plot(in_degree_values_plot, label='in-degree')
 plt.plot(out_degree_values_plot, label='out-degree')
 plt.legend()
 plt.title('Distribucion acumulativa de grados de entrada y salida')
-plt.savefig('distribucion_acum.png')
+plt.savefig(f'METRICAS_{nombre}/distribucion_acum.png')
 
 metrics['mean_in'] = np.mean(in_degree_values)
 metrics['max_in'] = np.max(in_degree_values)
@@ -104,9 +107,9 @@ katz_score = ''
 katz = ''
 gc.collect()
 
-nombre = os.path.splitext(nombre_archivo)[0]
+
 print(f"Diccionario escrito en metrics_{nombre}.bin")
-with open(f"metrics_{nombre}.bin", 'wb') as file:
+with open(f"METRICAS_{nombre}/metrics_{nombre}.bin", 'wb') as file:
     pickle.dump(metrics, file)
 
 
