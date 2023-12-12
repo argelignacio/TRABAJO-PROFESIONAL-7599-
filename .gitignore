@@ -1,3 +1,5 @@
 *.csv
-
 *.gexf
+.ipynb_checkpoints
+*.csv
+*.bin
