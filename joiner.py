@@ -17,5 +17,7 @@ for nombre_directorio in os.listdir(directorio_principal):
                     print(f"Datos en '{ruta_archivo}': {datos}")
                 df_temporal = pd.DataFrame.from_dict(datos, orient='index').T
                 df_final = pd.concat([df_final, df_temporal], ignore_index=True)
-                
+
+df_final.to_csv("registro_metricas_ventanas.csv", index=False)
+print("Guardado en registro_metricas_ventanas.csv")            
                 
