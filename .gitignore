@@ -1,3 +1,6 @@
 *.csv
 * 2023
 * 2022
+*.gexf
+.ipynb_checkpoints
+*.bin
