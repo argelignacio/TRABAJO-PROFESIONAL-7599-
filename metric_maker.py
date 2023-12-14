@@ -7,17 +7,14 @@ import pickle
 import os
 import matplotlib.pyplot as plt
 
+month = "07"
+year = "2023"
 
-# if len(sys.argv) < 2:
-#     print("Agregar nombre del archivo csv de transacciones a leer")
-#     sys.exit(1)
-
-for i in range(7, 32):
+for i in range(1, 32):
     if i < 10:
-        nombre_archivo = f'2022-05-0{i}.csv'
+        nombre_archivo = f'{year}-{month}-0{i}.csv'
     else:
-        nombre_archivo = f'2022-05-{i}.csv'
-# nombre_archivo = sys.argv[1]
+        nombre_archivo = f'{year}-{month}-{i}.csv'
 
     nombre = os.path.splitext(nombre_archivo)[0]
 
@@ -70,7 +67,6 @@ for i in range(7, 32):
     in_degree_values = ""
     gc.collect()
 
-
     # PageRank
     print("Calculando PageRank")
     pagerank = nx.pagerank(G)
@@ -105,22 +101,7 @@ for i in range(7, 32):
     hits = ""
     gc.collect()
 
-    # # Katz
-    # print("Calculando Katz")
-    # katz = nx.katz_centrality(G, tol=1e-02)
-    # katz_score = list(katz.values())
-
-    # metrics["mean_katz_score"] = np.mean(katz_score)
-    # metrics["min_katz_score"] = np.min(katz_score)
-    # metrics["max_katz_score"] = np.max(katz_score)
-
-    # katz_score = ""
-    # katz = ""
-    # gc.collect()
-
-
     # Metricas sobre columnas
-
     print("Calculando metricas sobre columnas")
 
     edges["value"] = edges["value"].astype(float)
