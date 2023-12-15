@@ -76,9 +76,11 @@ def column_metrics(metrics, data, column_name):
     return metrics
 
 def daily_metrics():
-    dates = [("05", "2023"), ("06", "2023"), ("07", "2023")]
-    for month, year in dates:
-        for i in range(1, 32):
+    dates = [("05", "2022", 31), ("06", "2022", 30), ("07", "2022", 31)]
+    for month, year, day_month in dates:
+        in_degree_values_month = []
+        out_degree_values_month = []
+        for i in range(1, day_month + 1):
             if i < 10:
                 name_archivo = f'{year}-{month}-0{i}.csv'
             else:
@@ -109,6 +111,8 @@ def daily_metrics():
             # Agregaciones sobre los g- y g+
             in_degree_values = [G.in_degree(n) for n in G.nodes]
             out_degree_values = [G.out_degree(n) for n in G.nodes]
+            in_degree_values_month.extend(in_degree_values)
+            out_degree_values_month.extend(out_degree_values)
             degree_values_plot(in_degree_values, out_degree_values, total_nodes, name)
 
             metrics = metrics_aggregation(metrics, in_degree_values, "in")
@@ -128,5 +132,21 @@ def daily_metrics():
             print(f"Diccionario escrito en METRICAS_{name}/metrics_{name}.bin")
             with open(f"METRICAS_{name}/metrics_{name}.bin", 'wb') as file:
                 pickle.dump(metrics, file)
+        
+
+        plt.hist(in_degree_values_month, bins=25, alpha=0.7, color='skyblue', edgecolor='black', log=True)
+        plt.title(f'Grados de Entrada en Escala Logarítmica- {month}-{year}')
+        plt.xlabel('Grado del Nodo')
+        plt.ylabel('Frecuencia')
+        plt.savefig(f'histograma_entrada_{month}_{year}.png')
+        plt.clf()
+
+        # Plotear histograma de grados de salida
+        plt.hist(out_degree_values_month, bins=25, alpha=0.7, color='firebrick', edgecolor='black', log=True)
+        plt.title(f'Grados de Salida en Escala Logarítmica - {month}-{year}')
+        plt.xlabel('Grado del Nodo')
+        plt.ylabel('Frecuencia')
+        plt.savefig(f'histograma_salida_{month}_{year}.png')
+        plt.clf()
 
 daily_metrics()
