@@ -6,6 +6,7 @@ import gc
 import pickle
 import os
 import matplotlib.pyplot as plt
+from datetime import datetime, timedelta
 
 def calculate_total_nodes(G, metrics):
     # Cantiadad de nodos totales
@@ -129,4 +130,68 @@ def daily_metrics():
             with open(f"METRICAS_{name}/metrics_{name}.bin", 'wb') as file:
                 pickle.dump(metrics, file)
 
+def weekly_metrics():
+    fecha_inicio = datetime(2023, 5, 1)
+    fecha_fin = datetime(2023, 7, 31)
+    dias_en_intervalo = (fecha_fin - fecha_inicio).days + 1
+
+    conjuntos_fechas = []
+    for i in range(0, dias_en_intervalo, 7):
+        conjunto_actual = []
+        for j in range(7):
+            fecha_actual = fecha_inicio + timedelta(days=i + j)
+            if fecha_actual <= fecha_fin:
+                conjunto_actual.append(tuple(map(str, fecha_actual.strftime("%Y %m %d").split())))
+        conjuntos_fechas.append(np.array(conjunto_actual))
+
+    for idx in range(0, len(conjuntos_fechas) +1):
+        dataframes = [
+            pd.read_csv(
+                f"{file[0]}-{file[1]}-{file[2]}.csv", 
+                usecols=["from_address", "to_address", "value", "nonce", "gas"]
+            ) for file in conjuntos_fechas[idx]
+        ]
+        edges = pd.concat(dataframes, ignore_index=True)
+
+        G = nx.from_pandas_edgelist(
+            edges, source="from_address", target="to_address", create_using=nx.DiGraph()
+        )
+
+        name = f"metrics_week_{idx}"
+        # ruta_completa = os.path.join(os.getcwd(), "METRICAS_"+name)
+        try:
+            os.mkdir("WEEKLY")
+        except FileExistsError:
+            print("Reemplazando el archivo ya existente")
+        except Exception:
+            raise "Error no controlado"
+
+        metrics = {}
+
+        metrics, total_nodes = calculate_total_nodes(G, metrics)
+        metrics, _total_edges = calculate_total_edges(G, metrics)
+
+        # Agregaciones sobre los g- y g+
+        # degree_values_plot(in_degree_values, out_degree_values, total_nodes, name)
+
+        in_degree_values = [G.in_degree(n) for n in G.nodes]
+        out_degree_values = [G.out_degree(n) for n in G.nodes]
+        metrics = metrics_aggregation(metrics, in_degree_values, "in")
+        metrics = metrics_aggregation(metrics, out_degree_values, "out")
+        out_degree_values = ""
+        in_degree_values = ""
+        gc.collect()
+
+        pagerank_metrics(G, metrics)
+        hits_metrics(G, metrics)
+        edges["value"] = edges["value"].astype(float)
+        metrics = column_metrics(metrics, edges, "value")
+        metrics = column_metrics(metrics, edges, "nonce")
+        metrics = column_metrics(metrics, edges, "gas")
+
+        print(f"Diccionario escrito en WEEKLY/{name}.bin")
+        with open(f"WEEKLY/{name}.bin", 'wb') as file:
+            pickle.dump(metrics, file)
+
 daily_metrics()
+weekly_metrics()
