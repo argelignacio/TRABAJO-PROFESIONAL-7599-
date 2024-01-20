@@ -6,3 +6,5 @@
 *.bin
 **/*.bin
 **/*.png
+poetry.lock
+prueba/

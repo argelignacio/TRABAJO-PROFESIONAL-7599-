@@ -1,7 +1,8 @@
 import pandas as pd 
 
-data = pd.read_csv("registro_metricas_ventanas.csv")
+data = pd.read_csv("registro_metricas_ventanas-2022-MAYO-JULIO.csv")
 data['month&day'] = data['date'].apply(lambda x: x[5:])
+data = data.sort_values(by='month&day', ascending=True)
 data['year'] = data['date'].apply(lambda x: x[:4])
 
 import matplotlib.pyplot as plt
