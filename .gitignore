@@ -1,0 +1,10 @@
+*.csv
+* 2023
+* 2022
+*.gexf
+.ipynb_checkpoints
+*.bin
+**/*.bin
+**/*.png
+poetry.lock
+prueba/
