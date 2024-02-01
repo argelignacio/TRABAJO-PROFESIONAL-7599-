@@ -13,6 +13,12 @@ matplotlib = "^3.8.2"
 gensim = "^4.3.2"
 node2vec = "^0.4.6"
 ipykernel = "^6.29.0"
+umap-learn = "^0.5.5"
+datashader = "^0.16.0"
+bokeh = "^3.3.3"
+holoviews = "^1.18.1"
+scikit-image = "^0.22.0"
+colorcet = "^3.0.1"
 
 
 [build-system]
