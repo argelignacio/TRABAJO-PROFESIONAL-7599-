@@ -19,9 +19,7 @@ bokeh = "^3.3.3"
 holoviews = "^1.18.1"
 scikit-image = "^0.22.0"
 colorcet = "^3.0.1"
-tensorflow = "2.11.0"
-tensorflow-addons = "^0.23.0"
-
+tensorflow = {version = "2.14.0", extras = ["and-cuda"]}
 
 [build-system]
 requires = ["poetry-core"]
