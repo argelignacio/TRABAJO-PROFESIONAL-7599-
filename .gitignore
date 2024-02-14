@@ -11,3 +11,4 @@ prueba/
 *.emb
 *.pkl
 *.npy
+*.whl
