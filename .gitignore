@@ -8,3 +8,6 @@
 **/*.png
 poetry.lock
 prueba/
+*.emb
+*.pkl
+*.npy
