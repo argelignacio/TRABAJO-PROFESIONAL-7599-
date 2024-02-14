@@ -94,6 +94,15 @@ def pipeline(files):
     compile_model(model)
     train_model(model, generator)
 
+def pipeline_v2(df):
+    cleaned_df = clean_nodes(df)
+    addresses_ids = create_ids(cleaned_df)
+    model_aux = create_aux_model(addresses_ids)
+    model = create_model(model_aux)
+    generator = create_generator(cleaned_df, addresses_ids)
+    compile_model(model)
+    train_model(model, generator)
+    return model_aux
 
 
 # Definir los nombres de los meses y el número de días en cada mes
