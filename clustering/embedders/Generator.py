@@ -1,5 +1,6 @@
 from keras.utils import Sequence
 import numpy as np
+import pandas as pd
 import tensorflow as tf
 
 class GeneratorTriplet(Sequence):
@@ -35,7 +36,13 @@ class GeneratorTriplet(Sequence):
         batch = self.df[init:end]
 
         # me agarro un sample de #batch_size transacciones.
-        negative = self.df.sample(len(batch))
+        negative = []
+        for i in range(self.batch_size):
+              aux = self.df.sample(1)
+              while (aux['to_address'] != batch.iloc[i]['to_address']) & (aux['to_address'] != batch.iloc[i]['from_address']):
+                  aux = self.df.sample(1)
+                  negative.append(aux)
+        # negative = self.df.sample(len(batch)
 
         anchor = np.array(batch['from_address'].apply(lambda x: self.ids.get(x)))
         positive = np.array(batch['to_address'].apply(lambda x: self.ids.get(x)))

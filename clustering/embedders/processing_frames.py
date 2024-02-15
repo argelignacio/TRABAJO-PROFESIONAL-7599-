@@ -81,8 +81,8 @@ def compile_model(model):
     )
 
 def train_model(model, generator):
-    callback = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=2, min_delta=0.06)
-    model.fit(generator, epochs=5, callbacks=[callback])
+    callback = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=50, restore_best_weights=True)
+    model.fit(generator, epochs=1000, callbacks=[callback])
 
 def pipeline(files):
     df = read_files(files)
@@ -102,7 +102,7 @@ def pipeline_v2(df):
     generator = create_generator(cleaned_df, addresses_ids)
     compile_model(model)
     train_model(model, generator)
-    return model_aux
+    return model_aux, addresses_ids
 
 
 # Definir los nombres de los meses y el número de días en cada mes

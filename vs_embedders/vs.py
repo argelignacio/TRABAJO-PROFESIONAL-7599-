@@ -2,17 +2,20 @@ import os, sys
 import networkx as nx
 from node2vec import Node2Vec
 import numpy as np
+import pickle as pkl
 sys.path.insert(0, os.path.abspath(".."))
 from clustering.embedders.processing_frames import pipeline_v2
 from fake_graph.Fake_graph import GeneratorFakeGraph
 
-df = GeneratorFakeGraph.generate_fake_graph_df(5, 10, 0.65, 150)
+df = GeneratorFakeGraph.generate_fake_graph_df(5, 10, 0.8, 200)
 df.to_csv("fake_graph.csv", index=False)
 
 # First, run the custom embedding
-model_1 = pipeline_v2(df)
+model_1, ids = pipeline_v2(df)
 embedding_matrix = model_1.get_layer(name="embedding").get_weights()
 np.array(embedding_matrix[0]).dump("embedding_matrix.npy")
+pkl.dump(ids, open("ids.pkl", "wb"))
+
 
 # Now run node2vec on the graph
 G = nx.from_pandas_edgelist(df, 'from_address', 'to_address')
