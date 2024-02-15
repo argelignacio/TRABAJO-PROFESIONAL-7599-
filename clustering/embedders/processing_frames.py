@@ -4,8 +4,8 @@ import pandas as pd
 import numpy as np
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Input, Embedding, Dense, BatchNormalization, Lambda
-from clustering.embedders.Generator import GeneratorTriplet
-from clustering.embedders.Loss import TripletCustom
+from clustering.embedders.all_v1.Generator import GeneratorTriplet
+from clustering.embedders.all_v2.LossV2 import TripletCustom
 import os
 from datetime import datetime, timedelta
 
@@ -76,12 +76,12 @@ def compile_model(model):
     loss = TripletCustom()    
 
     model.compile(
-        optimizer=Adam(2e-4),
+        optimizer=Adam(2e-3),
         loss=loss
     )
 
 def train_model(model, generator):
-    callback = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=50, restore_best_weights=True)
+    callback = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=5, restore_best_weights=True)
     model.fit(generator, epochs=1000, callbacks=[callback])
 
 def pipeline(files):

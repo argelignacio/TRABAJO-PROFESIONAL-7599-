@@ -8,7 +8,7 @@ class GeneratorFakeGraph:
         pass
 
     def generate_fake_graph_df(n_clusters, n_nodes_per_cluster, probability_intern=0.65, n_transactions=150):
-        clusters = [[uuid.uuid4() for _ in range(n_nodes_per_cluster)] for _ in range(n_clusters)]
+        clusters = [[(str(uuid.uuid4()), cluster_id) for _ in range(n_nodes_per_cluster)] for cluster_id in range(n_clusters)]
         
         data = []
         for _ in range(n_transactions):
@@ -20,7 +20,7 @@ class GeneratorFakeGraph:
                 id_1 = clusters[int(random.random() * (n_clusters -1))][int(random.random() * (n_nodes_per_cluster - 1))]
                 id_2 = clusters[int(random.random() * (n_clusters -1))][int(random.random() * (n_nodes_per_cluster - 1))]
                 
-            new_row = {'from_address': id_1, 'to_address': id_2}
+            new_row = {'from_address': id_1[0], 'to_address': id_2[0], 'cluster_from': id_1[1], 'cluster_to': id_2[1]}
             data.append(new_row)
         return pd.DataFrame(columns=['from_address', 'to_address'], data=data)
     
