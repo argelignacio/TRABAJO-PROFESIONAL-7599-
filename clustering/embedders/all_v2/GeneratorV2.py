@@ -15,6 +15,9 @@ class GeneratorTriplet(Sequence):
     def __len__(self):
         return int(np.ceil(len(self.df) / self.batch_size))
     
+    def reduce_df(self, df):
+        df = df.groupby(['from_address', 'to_address']).agg({'count', }).reset_index()
+    
     def init_positives(self):
         positives = {}
         for from_add in self.df['from_address']:
