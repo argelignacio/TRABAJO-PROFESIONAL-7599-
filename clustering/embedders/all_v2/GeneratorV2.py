@@ -5,7 +5,7 @@ import tensorflow as tf
 
 class GeneratorTriplet(Sequence):
     def __init__(self, df, ids, batch_size):
-        self.df = df
+        self.df = self.reduce_df(df)
         self.act_index = 0
         self.ids = ids
         self.batch_size = batch_size
@@ -16,7 +16,11 @@ class GeneratorTriplet(Sequence):
         return int(np.ceil(len(self.df) / self.batch_size))
     
     def reduce_df(self, df):
-        df = df.groupby(['from_address', 'to_address']).agg({'count', }).reset_index()
+        return df\
+            .groupby(['from_address', 'to_address'])\
+            .agg({ 'block_timestamp': 'count', 'value': 'sum' })\
+            .rename(columns={'block_timestamp': 'count_transactions', 'value': 'total_amount'})\
+            .reset_index()
     
     def init_positives(self):
         positives = {}
@@ -52,17 +56,18 @@ class GeneratorTriplet(Sequence):
                 aux = self.df.sample(1)
             negative.append(aux['to_address'].values[0])
 
+        metadata = batch[['count_transactions', 'total_amount']].values
+        
         anchor = np.array(batch['from_address'].apply(lambda x: self.ids.get(x)))
         positive = np.array(batch['to_address'].apply(lambda x: self.ids.get(x)))
         negative = np.array(list(map(lambda x: self.ids.get(str(x)), negative)))
 
-        
         anchor = tf.convert_to_tensor(anchor)
         positive = tf.convert_to_tensor(positive)
         negative = tf.convert_to_tensor(negative)
-        
-        
+
         # el fake target simunla lo que sería aprendizaje supervisado        
         fake_target = tf.convert_to_tensor(np.array([1]*self.batch_size))
 
-        return ([anchor, positive, negative], [fake_target]*3)
+
+        return ([anchor, metadata, positive, metadata, negative, metadata], [fake_target]*6)
