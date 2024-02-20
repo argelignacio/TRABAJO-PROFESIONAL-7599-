@@ -8,8 +8,7 @@ sys.path.insert(0, os.path.abspath(".."))
 from clustering.embedders.processing_frames import pipeline_v2
 from fake_graph.Fake_graph import GeneratorFakeGraph
 
-df = GeneratorFakeGraph.generate_fake_graph_df(5, 300, 0.8, 2000)
-df = df.groupby(['from_address', 'to_address']).count().reset_index()
+df = GeneratorFakeGraph.generate_fake_graph_df(6, 300, 0.85, 6000)
 df.to_csv("fake_graph.csv", index=False)
 
 # First, run the custom embedding

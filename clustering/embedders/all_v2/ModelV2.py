@@ -16,12 +16,12 @@ class ModelBuilder():
         raise Exception("Modelo no entrenado, emb basura.")
     
     def fit(self, generator):
-        callback = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=5, restore_best_weights=True)
+        callback = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=15, restore_best_weights=True)
         self.model.fit(generator, epochs=1000, callbacks=[callback])
         self.trained = True
         return self
 
-    def compile_model(self, lr=2e-3):
+    def compile_model(self, lr=2e-4):
         self.model.compile(
             optimizer=self.optimizer(lr),
             loss=self.loss()
@@ -47,9 +47,9 @@ class ModelBuilder():
         input_layer_anchor = Input(1)
         input_layer_positive = Input(1)
         input_layer_negative = Input(1)
-        metadata = Input(2)
-        metadata2 = Input(2)
-        metadata3 = Input(2)
+        metadata = Input(1)
+        metadata2 = Input(1)
+        metadata3 = Input(1)
 
         x_a = Reshape((64,))(self.model_aux(input_layer_anchor))
         x_p = Reshape((64,))(self.model_aux(input_layer_positive))
@@ -59,6 +59,6 @@ class ModelBuilder():
         merged_p = Concatenate()([x_p, metadata2])
         merged_n = Concatenate()([x_n, metadata3])
         merged_output = Concatenate(axis=-1)([merged_a, merged_p, merged_n])
-
+        
         self.model = Model([input_layer_anchor, metadata, input_layer_positive, metadata2, input_layer_negative, metadata3], merged_output)
         return self.model
