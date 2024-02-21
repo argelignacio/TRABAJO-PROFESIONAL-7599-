@@ -16,6 +16,5 @@ Este script se encarga de agarrar los binarios hechos por el metrics_maker y cre
 ## Clustering
 
 Consideraciones:
-    
     - Deberiamos incluir count por pares de transacciones y monto total a lo que da el generador para poder usarlo inteligentemente en la loss.
     - Deberiamos usar un threshold para excluir pares de address. Idea inicial, hacer histograma de count por pares y excluir los que esten por debajo del p15.

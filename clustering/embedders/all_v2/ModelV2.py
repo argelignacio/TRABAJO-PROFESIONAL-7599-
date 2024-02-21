@@ -16,12 +16,12 @@ class ModelBuilder():
         raise Exception("Modelo no entrenado, emb basura.")
     
     def fit(self, generator):
-        callback = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=15, restore_best_weights=True)
+        callback = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=5, restore_best_weights=True)
         self.model.fit(generator, epochs=1000, callbacks=[callback])
         self.trained = True
         return self
 
-    def compile_model(self, lr=2e-4):
+    def compile_model(self, lr=5e-4):
         self.model.compile(
             optimizer=self.optimizer(lr),
             loss=self.loss()

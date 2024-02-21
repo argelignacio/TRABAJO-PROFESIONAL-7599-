@@ -2,7 +2,7 @@ import tensorflow as tf
 from tensorflow.keras.optimizers import Adam
 import pandas as pd
 from clustering.embedders.all_v2.GeneratorV2 import GeneratorTriplet
-from clustering.embedders.all_v2.LossV2 import TripletCustom
+from clustering.embedders.all_v1.Loss import EuclideanLoss
 from clustering.embedders.all_v2.ModelV2 import ModelBuilder
 import os
 from datetime import datetime, timedelta
@@ -15,7 +15,6 @@ def set_gpu():
             logical_gpus = tf.config.list_logical_devices('GPU')
             print(len(gpus), "Physical GPUs,", len(logical_gpus), "Logical GPU")
         except RuntimeError as e:
-            # Visible devices must be set before GPUs have been initialized
             print(e)
 
 def read_files(files):
@@ -30,10 +29,13 @@ def create_ids(df):
     ids = {}
     for i, id in enumerate(set(df['from_address']).union(set(df['to_address']))):
         ids[id] = i
+    print("Ids created")
     return ids
 
 def create_generator(df, ids):
-    return GeneratorTriplet(df, ids, 64)
+    generator = GeneratorTriplet(df, ids, 64)
+    print("Generator done.")
+    return generator
 
 def train_model(model, generator):
     callback = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=5, restore_best_weights=True)
@@ -44,18 +46,20 @@ def pipeline(files):
     cleaned_df = clean_nodes(df)
     addresses_ids = create_ids(cleaned_df)
 
-    model = ModelBuilder(addresses_ids, TripletCustom, Adam)
+    model = ModelBuilder(addresses_ids, EuclideanLoss, Adam)
 
     generator = create_generator(cleaned_df, addresses_ids)
     embeddings = model.compile_model().fit(generator).get_embeddings()
     return embeddings
 
 def pipeline_v2(df):
+    set_gpu()
     cleaned_df = clean_nodes(df)
     addresses_ids = create_ids(cleaned_df)
 
-    model = ModelBuilder(addresses_ids, TripletCustom, Adam)
-
+    print("Initializing model")
+    model = ModelBuilder(addresses_ids, EuclideanLoss, Adam)
+    
     generator = create_generator(cleaned_df, addresses_ids)
     embeddings = model.compile_model().fit(generator).get_embeddings()
     return embeddings, addresses_ids

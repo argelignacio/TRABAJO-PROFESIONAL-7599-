@@ -1,6 +1,7 @@
 from keras.utils import Sequence
 import numpy as np
 import pandas as pd
+from tqdm import tqdm
 import tensorflow as tf
 
 class GeneratorTriplet(Sequence):
@@ -21,14 +22,20 @@ class GeneratorTriplet(Sequence):
             .agg({ 'block_timestamp': 'count', 'value': 'sum' })\
             .rename(columns={'block_timestamp': 'count_transactions', 'value': 'total_amount'})\
             .reset_index()
-        df['gravity_const'] = df['total_amount']/df['count_transactions'] 
-        df['gravity_const'] =6*((df['gravity_const'] - df['gravity_const'].mean() ) / df['gravity_const'].std())
+        df['gravity_const'] = df['total_amount']/df['count_transactions']
+
+        weigth = 4
+        gravity_const_mean = df['gravity_const'].mean()
+        gravity_const_std = df['gravity_const'].std()
+        df['gravity_const'] = weigth*((df['gravity_const'] - gravity_const_mean) / gravity_const_std)
+        print("Dataframe reduced.")
         return df
     
     def init_positives(self):
         positives = {}
-        for from_add in self.df['from_address']:
+        for from_add in tqdm(self.df['from_address']):
             positives[from_add] = self.df[self.df.from_address == from_add]['to_address'].values
+        print("Positives calculated.")
         return positives
     
     def __iter__(self):
