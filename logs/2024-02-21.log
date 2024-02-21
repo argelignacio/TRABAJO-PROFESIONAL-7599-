@@ -1,0 +1,12 @@
+2024-02-21 15:29:24,354 - INFO - Embedding matrix shape: (1495, 128)
+2024-02-21 15:29:24,354 - ERROR - This is an error message
+2024-02-21 15:29:24,354 - WARNING - This is a warning message
+2024-02-21 15:29:24,354 - CRITICAL - This is a critical message
+2024-02-21 15:29:24,354 - DEBUG - This is a debug message
+2024-02-21 15:30:36,537 - INFO - Node2Vec embedding matrix shape: (1495, 128)
+2024-02-21 15:31:26,218 - INFO - Embedding matrix shape: (1794, 128)
+2024-02-21 15:31:26,218 - ERROR - This is an error message
+2024-02-21 15:31:26,218 - WARNING - This is a warning message
+2024-02-21 15:31:26,218 - CRITICAL - This is a critical message
+2024-02-21 15:31:26,218 - DEBUG - This is a debug message
+2024-02-21 15:32:54,816 - INFO - Node2Vec embedding matrix shape: (1794, 128)
