@@ -31,8 +31,8 @@ class ModelBuilder():
 
     def create_embedder(self, ids):
         input_aux = Input(1)
-        output_aux = Embedding(len(ids), self.embedder_dimension)(input_aux)
-        # output_aux = GaussianNoise(0.02)(x)
+        x = Embedding(len(ids), self.embedder_dimension)(input_aux)
+        output_aux = GaussianNoise(0.02)(x)
         self.model_aux = Model(input_aux, output_aux)
         return self.model_aux
 

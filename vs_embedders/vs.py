@@ -7,7 +7,9 @@ import pickle as pkl
 sys.path.insert(0, os.path.abspath(".."))
 from clustering.embedders.processing_frames import pipeline_v2
 from fake_graph.Fake_graph import GeneratorFakeGraph
+from logger.logger import MyLogger
 
+logger = MyLogger(__name__)
 df = GeneratorFakeGraph.generate_fake_graph_df(6, 300, 0.85, 6000)
 df.to_csv("fake_graph.csv", index=False)
 
@@ -26,9 +28,8 @@ pkl.dump(ids, open("ids.pkl", "wb"))
 embedding_matrix_1 = np.load("embedding_matrix.npy", allow_pickle=True)
 # embedding_matrix_2 = np.load("node2vec_embedding_matrix.npy", allow_pickle=True)
 
-print("Embedding matrix 1: ", embedding_matrix_1.shape)
-# print("Embedding matrix 2: ", embedding_matrix_2.shape)
-
+logger.info(f"Embedding matrix 1: {embedding_matrix_1}")
+logger.info(f"Embedding matrix 2: {embedding_matrix_2}")
 
 
 
