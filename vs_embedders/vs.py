@@ -29,7 +29,7 @@ embedding_matrix_1 = np.load("embedding_matrix.npy", allow_pickle=True)
 # embedding_matrix_2 = np.load("node2vec_embedding_matrix.npy", allow_pickle=True)
 
 logger.info(f"Embedding matrix 1: {embedding_matrix_1}")
-logger.info(f"Embedding matrix 2: {embedding_matrix_2}")
+# logger.info(f"Embedding matrix 2: {embedding_matrix_2}")
 
 
 
