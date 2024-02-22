@@ -11,3 +11,7 @@ prueba/
 *.emb
 *.pkl
 *.npy
+*.whl
+*.pyc
+__pycache__/
+*.log

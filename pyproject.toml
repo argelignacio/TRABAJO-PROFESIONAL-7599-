@@ -20,6 +20,7 @@ holoviews = "^1.18.1"
 scikit-image = "^0.22.0"
 colorcet = "^3.0.1"
 tensorflow = {version = "2.14.0", extras = ["and-cuda"]}
+hdbscan = "^0.8.33"
 
 [build-system]
 requires = ["poetry-core"]

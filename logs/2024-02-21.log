@@ -1,0 +1,107 @@
+2024-02-21 20:17:53,870 - INFO - Generating Fake Graph with: n_clusters: 6 n_nodes_per_cluster: 300 probability_intern: 0.85 n_transactions: 6000
+2024-02-21 20:17:53,882 - INFO - Fake Graph was built
+2024-02-21 20:19:12,865 - INFO - Generating Fake Graph with: n_clusters: 6 n_nodes_per_cluster: 300 probability_intern: 0.85 n_transactions: 6000
+2024-02-21 20:19:12,877 - INFO - Fake Graph was built
+2024-02-21 20:19:57,920 - INFO - Generating Fake Graph with: n_clusters: 6 n_nodes_per_cluster: 300 probability_intern: 0.85 n_transactions: 6000
+2024-02-21 20:19:57,932 - INFO - Fake Graph was built
+2024-02-21 20:19:58,035 - INFO - GPU set: [LogicalDevice(name='/device:GPU:0', device_type='GPU')]
+2024-02-21 20:19:58,038 - INFO - Ids created
+2024-02-21 20:19:58,038 - INFO - Creating model
+2024-02-21 20:19:58,325 - INFO - Dataframe reduced.
+2024-02-21 20:20:01,247 - INFO - Positives initialized.
+2024-02-21 20:20:01,247 - INFO - Generator created
+2024-02-21 20:22:47,756 - INFO - Save file custom_embedding_matrix.npy
+2024-02-21 20:22:47,757 - INFO - Save file ids.pkl
+2024-02-21 20:22:55,217 - INFO - Node2Vec model created with dimensions: 128 walk_length: 16 num_walks: 100 workers: 2
+2024-02-21 20:24:14,944 - INFO - Node2Vec model fitted with window: 10 min_count: 1 batch_words: 4
+2024-02-21 20:24:14,951 - INFO - Save file node2vec_embedding_matrix.npy
+2024-02-21 20:51:03,077 - INFO - KMeans fitted with n_clusters: 5 init: k-means++ n_init: 10 random_state: 3425
+2024-02-21 20:51:03,802 - INFO - KMeans fitted with n_clusters: 5 init: k-means++ n_init: 10 random_state: 3425
+2024-02-21 20:51:59,277 - INFO - KMeans fitted with n_clusters: 5 init: k-means++ n_init: 10 random_state: 3425
+2024-02-21 20:51:59,361 - INFO - KMeans fitted with n_clusters: 5 init: k-means++ n_init: 10 random_state: 3425
+2024-02-21 20:55:38,741 - INFO - KMeans fitted with n_clusters: 6 init: k-means++ n_init: 300 random_state: 3425
+2024-02-21 20:55:59,991 - INFO - KMeans fitted with n_clusters: 6 init: k-means++ n_init: 300 random_state: 3425
+2024-02-21 21:02:26,548 - INFO - KMeans fitted with n_clusters: 6 init: k-means++ n_init: 300 random_state: 3425
+2024-02-21 21:02:53,660 - INFO - KMeans fitted with n_clusters: 6 init: k-means++ n_init: 300 random_state: 3425
+2024-02-21 21:07:54,492 - INFO - KMeans fitted with n_clusters: 6 init: k-means++ n_init: 300 random_state: 3425
+2024-02-21 21:08:16,409 - INFO - KMeans fitted with n_clusters: 6 init: k-means++ n_init: 300 random_state: 3425
+2024-02-21 21:09:49,373 - INFO - KMeans fitted with n_clusters: 6 init: k-means++ n_init: 300 random_state: 3425
+2024-02-21 21:10:13,642 - INFO - KMeans fitted with n_clusters: 6 init: k-means++ n_init: 300 random_state: 3425
+2024-02-21 21:12:06,426 - INFO - KMeans fitted with n_clusters: 6 init: k-means++ n_init: 300 random_state: 3425
+2024-02-21 21:12:35,257 - INFO - KMeans fitted with n_clusters: 6 init: k-means++ n_init: 300 random_state: 3425
+2024-02-21 21:15:12,485 - INFO - KMeans fitted with n_clusters: 6 init: k-means++ n_init: 300 random_state: 3425
+2024-02-21 21:15:37,465 - INFO - KMeans fitted with n_clusters: 6 init: k-means++ n_init: 300 random_state: 3425
+2024-02-21 21:17:26,337 - INFO - KMeans fitted with n_clusters: 6 init: k-means++ n_init: 300 random_state: 3425
+2024-02-21 21:17:54,573 - INFO - KMeans fitted with n_clusters: 6 init: k-means++ n_init: 300 random_state: 3425
+2024-02-21 21:19:04,218 - INFO - KMeans fitted with n_clusters: 6 init: k-means++ n_init: 300 random_state: 3425
+2024-02-21 21:19:30,122 - INFO - KMeans fitted with n_clusters: 6 init: k-means++ n_init: 300 random_state: 3425
+2024-02-21 21:22:14,334 - INFO - KMeans fitted with n_clusters: 6 init: k-means++ n_init: 300 random_state: 3425
+2024-02-21 21:22:39,807 - INFO - KMeans fitted with n_clusters: 6 init: k-means++ n_init: 300 random_state: 3425
+2024-02-21 21:26:44,355 - INFO - KMeans fitted with n_clusters: 6 init: k-means++ n_init: 300 random_state: 3425
+2024-02-21 21:27:08,322 - INFO - KMeans fitted with n_clusters: 6 init: k-means++ n_init: 300 random_state: 3425
+2024-02-21 21:28:23,303 - INFO - KMeans fitted with n_clusters: 6 init: k-means++ n_init: 300 random_state: 3425
+2024-02-21 21:28:46,379 - INFO - KMeans fitted with n_clusters: 6 init: k-means++ n_init: 300 random_state: 3425
+2024-02-21 21:31:29,216 - INFO - KMeans fitted with n_clusters: 6 init: k-means++ n_init: 300 random_state: 3425
+2024-02-21 21:31:54,905 - INFO - KMeans fitted with n_clusters: 6 init: k-means++ n_init: 300 random_state: 3425
+2024-02-21 21:34:03,796 - INFO - KMeans fitted with n_clusters: 6 init: k-means++ n_init: 300 random_state: 3425
+2024-02-21 21:34:34,459 - INFO - KMeans fitted with n_clusters: 6 init: k-means++ n_init: 300 random_state: 3425
+2024-02-21 21:38:51,978 - INFO - KMeans fitted with n_clusters: 6 init: k-means++ n_init: 300 random_state: 3425
+2024-02-21 21:39:12,697 - INFO - KMeans fitted with n_clusters: 6 init: k-means++ n_init: 300 random_state: 3425
+2024-02-21 22:01:50,768 - INFO - Generating Fake Graph with: n_clusters: 6 n_nodes_per_cluster: 300 probability_intern: 0.85 n_transactions: 6000
+2024-02-21 22:01:50,789 - INFO - Fake Graph was built
+2024-02-21 22:01:51,054 - INFO - GPU set: [LogicalDevice(name='/device:GPU:0', device_type='GPU')]
+2024-02-21 22:01:51,060 - INFO - Ids created
+2024-02-21 22:01:51,060 - INFO - Creating model
+2024-02-21 22:01:51,500 - INFO - Dataframe reduced.
+2024-02-21 22:01:57,534 - INFO - Positives initialized.
+2024-02-21 22:01:57,534 - INFO - Generator created
+2024-02-21 22:02:00,452 - INFO - KMeans fitted with n_clusters: 6 init: k-means++ n_init: 300 random_state: 3425
+2024-02-21 22:02:31,169 - INFO - KMeans fitted with n_clusters: 6 init: k-means++ n_init: 300 random_state: 3425
+2024-02-21 22:04:58,202 - INFO - Save file custom_embedding_matrix.npy
+2024-02-21 22:04:58,203 - INFO - Save file ids.pkl
+2024-02-21 22:05:05,278 - INFO - Node2Vec model created with dimensions: 128 walk_length: 16 num_walks: 100 workers: 2
+2024-02-21 22:06:17,252 - INFO - Node2Vec model fitted with window: 10 min_count: 1 batch_words: 4
+2024-02-21 22:06:17,258 - INFO - Save file node2vec_embedding_matrix.npy
+2024-02-21 22:08:14,294 - INFO - Generating Fake Graph with: n_clusters: 6 n_nodes_per_cluster: 300 probability_intern: 0.85 n_transactions: 6000
+2024-02-21 22:08:14,306 - INFO - Fake Graph was built
+2024-02-21 22:08:14,420 - INFO - GPU set: [LogicalDevice(name='/device:GPU:0', device_type='GPU')]
+2024-02-21 22:08:14,423 - INFO - Ids created
+2024-02-21 22:08:14,424 - INFO - Creating model
+2024-02-21 22:08:14,618 - INFO - Dataframe reduced.
+2024-02-21 22:08:17,560 - INFO - Positives initialized.
+2024-02-21 22:08:17,560 - INFO - Generator created
+2024-02-21 22:10:58,002 - INFO - Save file custom_embedding_matrix.npy
+2024-02-21 22:10:58,002 - INFO - Save file ids.pkl
+2024-02-21 22:11:05,083 - INFO - Node2Vec model created with dimensions: 128 walk_length: 16 num_walks: 100 workers: 2
+2024-02-21 22:12:14,009 - INFO - Node2Vec model fitted with window: 10 min_count: 1 batch_words: 4
+2024-02-21 22:12:14,015 - INFO - Save file node2vec_embedding_matrix.npy
+2024-02-21 22:13:59,988 - INFO - Generating Fake Graph with: n_clusters: 6 n_nodes_per_cluster: 300 probability_intern: 0.85 n_transactions: 3000
+2024-02-21 22:13:59,996 - INFO - Fake Graph was built
+2024-02-21 22:14:00,094 - INFO - GPU set: [LogicalDevice(name='/device:GPU:0', device_type='GPU')]
+2024-02-21 22:14:00,096 - INFO - Ids created
+2024-02-21 22:14:00,096 - INFO - Creating model
+2024-02-21 22:14:00,265 - INFO - Dataframe reduced.
+2024-02-21 22:14:01,303 - INFO - Positives initialized.
+2024-02-21 22:14:01,303 - INFO - Generator created
+2024-02-21 22:15:21,175 - INFO - Save file custom_embedding_matrix.npy
+2024-02-21 22:15:21,176 - INFO - Save file ids.pkl
+2024-02-21 22:15:26,297 - INFO - Node2Vec model created with dimensions: 128 walk_length: 16 num_walks: 100 workers: 2
+2024-02-21 22:16:26,126 - INFO - Node2Vec model fitted with window: 10 min_count: 1 batch_words: 4
+2024-02-21 22:16:26,132 - INFO - Save file node2vec_embedding_matrix.npy
+2024-02-21 22:16:51,620 - INFO - KMeans fitted with n_clusters: 6 init: k-means++ n_init: 300 random_state: 3425
+2024-02-21 22:17:07,511 - INFO - KMeans fitted with n_clusters: 6 init: k-means++ n_init: 300 random_state: 3425
+2024-02-21 22:39:11,057 - INFO - Generating Fake Graph with: n_clusters: 6 n_nodes_per_cluster: 300 probability_intern: 0.85 n_transactions: 3000
+2024-02-21 22:39:11,064 - INFO - Fake Graph was built
+2024-02-21 22:39:11,162 - INFO - GPU set: [LogicalDevice(name='/device:GPU:0', device_type='GPU')]
+2024-02-21 22:39:11,165 - INFO - Ids created
+2024-02-21 22:39:11,165 - INFO - Creating model
+2024-02-21 22:39:11,331 - INFO - Dataframe reduced.
+2024-02-21 22:39:12,359 - INFO - Positives initialized.
+2024-02-21 22:39:12,359 - INFO - Generator created
+2024-02-21 22:39:25,562 - INFO - Save file custom_embedding_matrix.npy
+2024-02-21 22:39:25,562 - INFO - Save file ids.pkl
+2024-02-21 22:39:32,009 - INFO - Node2Vec model created with dimensions: 128 walk_length: 16 num_walks: 100 workers: 2
+2024-02-21 22:40:34,939 - INFO - Node2Vec model fitted with window: 10 min_count: 1 batch_words: 4
+2024-02-21 22:40:34,952 - INFO - Save file node2vec_embedding_matrix.npy
+2024-02-21 22:41:07,509 - INFO - KMeans fitted with n_clusters: 6 init: k-means++ n_init: 300 random_state: 3425
+2024-02-21 22:41:28,834 - INFO - KMeans fitted with n_clusters: 6 init: k-means++ n_init: 300 random_state: 3425

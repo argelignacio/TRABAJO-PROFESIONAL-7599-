@@ -3,6 +3,10 @@ import pickle
 import pandas as pd
 import re
 
+from logger.logger import MyLogger
+
+logger = MyLogger(__name__)
+
 directorio_principal = os.getcwd()
 df_final = pd.DataFrame()
 
@@ -23,10 +27,10 @@ for mes in meses:
                             ruta_archivo = os.path.join(ruta_directorio_act, nombre_archivo)
                             with open(ruta_archivo, 'rb') as file:
                                 datos = pickle.load(file)
-                                print(f"Datos en '{ruta_archivo}'")
+                                logger.info(f"Datos en '{ruta_archivo}'")
                             datos['date'] = fecha_extraida
                             df_temporal = pd.DataFrame.from_dict(datos, orient='index').T
                             df_final = pd.concat([df_final, df_temporal], ignore_index=True)
 
 df_final.to_csv("registro_metricas_ventanas.csv", index=False)
-print("Guardado en registro_metricas_ventanas.csv") 
+logger.info("Guardado en registro_metricas_ventanas.csv")
