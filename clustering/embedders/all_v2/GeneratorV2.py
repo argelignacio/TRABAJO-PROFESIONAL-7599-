@@ -24,12 +24,12 @@ class GeneratorTriplet(Sequence):
             .reset_index()
         df['gravity_const'] = df['total_amount']/df['count_transactions']
         
-        # normalized_count_transactions = (df['count_transactions'] - df['count_transactions'].mean()) / df['count_transactions'].std()
+        normalized_count_transactions = (df['count_transactions'] - df['count_transactions'].mean()) / df['count_transactions'].std()
 
         weigth = 6
         gravity_const_mean = df['gravity_const'].mean()
         gravity_const_std = df['gravity_const'].std()
-        df['gravity_const'] = weigth*(((df['gravity_const'] - gravity_const_mean) / gravity_const_std))
+        df['gravity_const'] = weigth*(((df['gravity_const'] - gravity_const_mean) / gravity_const_std) + normalized_count_transactions)
         print("Dataframe reduced.")
         return df
     
