@@ -14,3 +14,4 @@ prueba/
 *.whl
 *.pyc
 __pycache__/
+*.log

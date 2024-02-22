@@ -6,6 +6,7 @@ class ModelBuilder():
     def __init__(self, ids, loss, optimizer):
         self.loss = loss
         self.optimizer = optimizer
+        self.embedder_dimension = 64
         self.embedder = self.create_embedder(ids)
         self.wrapper = self.create_wrapper()
         self.trained = False
@@ -30,10 +31,8 @@ class ModelBuilder():
 
     def create_embedder(self, ids):
         input_aux = Input(1)
-        x = Embedding(len(ids), 128)(input_aux)
-        x = GaussianNoise(0.02)(x)
-        x = Dense(64)(x)
-        output_aux = Dense(64)(x)
+        x = Embedding(len(ids), self.embedder_dimension)(input_aux)
+        output_aux = GaussianNoise(0.005)(x)
         self.model_aux = Model(input_aux, output_aux)
         return self.model_aux
 
@@ -51,9 +50,9 @@ class ModelBuilder():
         metadata2 = Input(1)
         metadata3 = Input(1)
 
-        x_a = Reshape((64,))(self.model_aux(input_layer_anchor))
-        x_p = Reshape((64,))(self.model_aux(input_layer_positive))
-        x_n = Reshape((64,))(self.model_aux(input_layer_negative))
+        x_a = Reshape((self.embedder_dimension,))(self.model_aux(input_layer_anchor))
+        x_p = Reshape((self.embedder_dimension,))(self.model_aux(input_layer_positive))
+        x_n = Reshape((self.embedder_dimension,))(self.model_aux(input_layer_negative))
 
         merged_a = Concatenate()([x_a, metadata])
         merged_p = Concatenate()([x_p, metadata2])
