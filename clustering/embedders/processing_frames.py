@@ -6,6 +6,9 @@ from clustering.embedders.all_v1.Loss import EuclideanLoss
 from clustering.embedders.all_v2.ModelV2 import ModelBuilder
 import os
 from datetime import datetime, timedelta
+from logger.logger import MyLogger
+
+logger = MyLogger(__name__)
 
 def set_gpu():
     gpus = tf.config.list_physical_devices('GPU')
@@ -13,7 +16,7 @@ def set_gpu():
         try:
             tf.config.set_visible_devices(gpus[0], 'GPU')
             logical_gpus = tf.config.list_logical_devices('GPU')
-            print(len(gpus), "Physical GPUs,", len(logical_gpus), "Logical GPU")
+            logger.info(f"GPU set: {logical_gpus}")
         except RuntimeError as e:
             print(e)
 
@@ -29,12 +32,12 @@ def create_ids(df):
     ids = {}
     for i, id in enumerate(set(df['from_address']).union(set(df['to_address']))):
         ids[id] = i
-    print("Ids created")
+    logger.info("Ids created")
     return ids
 
 def create_generator(df, ids):
     generator = GeneratorTriplet(df, ids, 64)
-    print("Generator done.")
+    logger.info("Generator created")
     return generator
 
 def train_model(model, generator):
@@ -57,7 +60,7 @@ def pipeline_v2(df):
     cleaned_df = clean_nodes(df)
     addresses_ids = create_ids(cleaned_df)
 
-    print("Initializing model")
+    logger.info("Creating model")
     model = ModelBuilder(addresses_ids, EuclideanLoss, Adam)
     
     generator = create_generator(cleaned_df, addresses_ids)
