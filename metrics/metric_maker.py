@@ -48,7 +48,7 @@ def metrics_aggregation(metrics, data, alias):
 
 def pagerank_metrics(G, metrics):
     # PageRank
-    logger.info("Calculando PageRank")
+    logger.debug("Calculando PageRank")
     pagerank = nx.pagerank(G)
     pagerank_for_metrics = list(pagerank.values())
     metrics = metrics_aggregation(metrics, pagerank_for_metrics, "pagerank")
@@ -58,7 +58,7 @@ def pagerank_metrics(G, metrics):
     return metrics
 
 def hits_metrics(G, metrics):
-    logger.info("Calculando HITS")
+    logger.debug("Calculando HITS")
     hits = nx.hits(G)
     hub_scores, authority_scores = hits
     hub_scores_list = [x for x in hub_scores.values()]
@@ -72,7 +72,7 @@ def hits_metrics(G, metrics):
     return metrics
 
 def column_metrics(metrics, data, column_name):
-    logger.info(f"Calculando métricas para la columna {column_name}")
+    logger.debug(f"Calculando métricas para la columna {column_name}")
     metrics[f"mean_{column_name}"] = data[column_name].mean()
     metrics[f"std_{column_name}"] = data[column_name].std()
     metrics[f"max_{column_name}"] = data[column_name].max()
@@ -134,7 +134,7 @@ def daily_metrics():
             metrics = column_metrics(metrics, edges, "gas")
 
             name = os.path.splitext(name_archivo)[0]
-            logger.info(f"Diccionario escrito en METRICAS_{name}/metrics_{name}.bin")
+            logger.debug(f"Diccionario escrito en METRICAS_{name}/metrics_{name}.bin")
             with open(f"METRICAS_{name}/metrics_{name}.bin", 'wb') as file:
                 pickle.dump(metrics, file)
         
@@ -186,7 +186,7 @@ def weekly_metrics():
         try:
             os.mkdir("WEEKLY")
         except FileExistsError:
-            logger.info("Reemplazando el archivo ya existente en WEEKLY/")
+            logger.debug("Reemplazando el archivo ya existente en WEEKLY/")
         except Exception:
             logger.error("Error no controlado en weekly_metrics()")
             raise "Error no controlado"
@@ -214,7 +214,7 @@ def weekly_metrics():
         metrics = column_metrics(metrics, edges, "nonce")
         metrics = column_metrics(metrics, edges, "gas")
 
-        logger.info(f"Diccionario escrito en WEEKLY/{name}.bin")
+        logger.debug(f"Diccionario escrito en WEEKLY/{name}.bin")
         with open(f"WEEKLY/{name}.bin", 'wb') as file:
             pickle.dump(metrics, file)
 

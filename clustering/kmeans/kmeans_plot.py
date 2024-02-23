@@ -8,14 +8,11 @@ import os
 from datetime import datetime
 import sys
 sys.path.insert(0, os.path.abspath("../.."))
-from logger.logger import MyLogger
-
-logger = MyLogger(__name__)
 
 def read_files():
     with open("vs_embedders/ids.pkl", "rb") as file:
         ids = pickle.load(file)
-    embedding_matrix_custom = np.load("vs_embedders/custom_embedding_matrix.npy", allow_pickle=True)
+    embedding_matrix_custom = np.load("vs_embedders/embedding_matrix.npy", allow_pickle=True)
     embedding_matrix_node2vec = np.load("vs_embedders/node2vec_embedding_matrix.npy", allow_pickle=True)
     return embedding_matrix_custom, embedding_matrix_node2vec, ids
 
@@ -82,7 +79,7 @@ def plot_kmeans(embedding_custom, embedding_n2v, nodes_labels_custom, nodes_labe
     plt.savefig(os.path.join(plots_directory, filename))
 
 
-def kmeans_fit(embedding_matrix, ids, n_clusters, init, n_init, random_state=3425):
+def kmeans_fit(logger, embedding_matrix, ids, n_clusters, init, n_init, random_state=3425):
     kmeans_cluster = KMeans(n_clusters=n_clusters, init=init, n_init=n_init, random_state=random_state).fit(embedding_matrix)
     logger.info("KMeans fitted with n_clusters: " + str(n_clusters) + " init: " + str(init) + " n_init: " + str(n_init) + " random_state: " + str(random_state))
     kmeans_labels = kmeans_cluster.labels_
@@ -92,11 +89,11 @@ def get_embedding(embedding_matrix):
     return umap.UMAP(n_components=2).fit(embedding_matrix)
 
 
-def run_kmeans():
+def run_kmeans(logger):
     embedding_matrix_custom, embedding_matrix_node2vec, ids = read_files()
     embedding_custom = get_embedding(embedding_matrix_custom)
     embedding_node2vec = get_embedding(embedding_matrix_node2vec)
-    nodes_labels_custom = kmeans_fit(embedding_matrix_custom, ids, 6, 'k-means++', 300)
-    nodes_labels_node2vec = kmeans_fit(embedding_matrix_node2vec, ids, 6, 'k-means++', 300)
+    nodes_labels_custom = kmeans_fit(logger, embedding_matrix_custom, ids, 6, 'k-means++', 300)
+    nodes_labels_node2vec = kmeans_fit(logger, embedding_matrix_node2vec, ids, 6, 'k-means++', 300)
     plot_elbow(embedding_matrix_custom, embedding_matrix_node2vec)
     plot_kmeans(embedding_custom, embedding_node2vec, nodes_labels_custom, nodes_labels_node2vec)

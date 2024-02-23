@@ -8,14 +8,12 @@ import os
 from datetime import datetime
 import sys
 sys.path.insert(0, os.path.abspath("../.."))
-from logger.logger import MyLogger
 
-logger = MyLogger(__name__)
 
 def read_files():
     with open("vs_embedders/ids.pkl", "rb") as file:
         ids = pickle.load(file)
-    embedding_matrix_custom = np.load("vs_embedders/custom_embedding_matrix.npy", allow_pickle=True)
+    embedding_matrix_custom = np.load("vs_embedders/embedding_matrix.npy", allow_pickle=True)
     embedding_matrix_node2vec = np.load("vs_embedders/node2vec_embedding_matrix.npy", allow_pickle=True)
     return embedding_matrix_custom, embedding_matrix_node2vec, ids
 

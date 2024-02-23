@@ -6,12 +6,10 @@ import tensorflow as tf
 import sys
 import os
 sys.path.insert(0, os.path.abspath("../../.."))
-from logger.logger import MyLogger
-
-logger = MyLogger(__name__)
 
 class GeneratorTriplet(Sequence):
-    def __init__(self, df, ids, batch_size):
+    def __init__(self, df, ids, batch_size, logger):
+        self.logger = logger
         self.df = self.reduce_df(df)
         self.act_index = 0
         self.ids = ids
@@ -36,14 +34,14 @@ class GeneratorTriplet(Sequence):
         gravity_const_mean = df['gravity_const'].mean()
         gravity_const_std = df['gravity_const'].std()
         df['gravity_const'] = weigth*(((df['gravity_const'] - gravity_const_mean) / gravity_const_std) + normalized_count_transactions)
-        logger.info("Dataframe reduced.")
+        self.logger.debug("Dataframe reduced.")
         return df
     
     def init_positives(self):
         positives = {}
         for from_add in tqdm(self.df['from_address']):
             positives[from_add] = self.df[self.df.from_address == from_add]['to_address'].values
-        logger.info("Positives initialized.")
+        self.logger.debug("Positives initialized.")
         return positives
     
     def __iter__(self):
