@@ -6,6 +6,7 @@ import pandas as pd
 import umap
 import os
 from datetime import datetime
+import time
 import sys
 sys.path.insert(0, os.path.abspath("../.."))
 
@@ -42,20 +43,29 @@ def plot_hdbscan(embedding_custom, embedding_n2v, nodes_labels_custom, nodes_lab
     plt.savefig(os.path.join(plots_directory, filename))
 
 
-def hdbscan_fit(embedding_matrix, ids):
+def hdbscan_fit(logger, embedding_matrix, ids, method):
+    start_fit = time.time()
     hdbs_model = hdbscan.HDBSCAN().fit(embedding_matrix)
+    end_fit = time.time()
+    logger.info("HDBSCAN over embedding from " + str(method))
+    logger.info(f'HDBSCAN fit in: {(end_fit - start_fit)/60} minutes.')
     hbds_scan_labels = hdbs_model.labels_
     return pd.DataFrame(zip(ids, hbds_scan_labels), columns = ['node_ids','hdbscan'])
 
 
-def get_embedding(embedding_matrix):
-    return umap.UMAP(n_components=2).fit(embedding_matrix)
+def get_embedding(embedding_matrix, logger, method):
+    logger.info(f'Reducing dimensions of embeddings generated with {method} using UMAP.')
+    start_proyection = time.time()
+    embeddings_reduced = umap.UMAP(n_components=2).fit(embedding_matrix)
+    end_proyection = time.time()
+    logger.info(f'Dimensions reduced using UMAP in {(end_proyection - start_proyection)/60} minutes')
+    return embeddings_reduced
 
 
-def run_hdbscan():
+def run_hdbscan(logger):
     embedding_matrix_custom, embedding_matrix_node2vec, ids = read_files()
-    embedding_custom = get_embedding(embedding_matrix_custom)
-    embedding_node2vec = get_embedding(embedding_matrix_node2vec)
-    nodes_labels_custom = hdbscan_fit(embedding_matrix_custom, ids)
-    nodes_labels_node2vec = hdbscan_fit(embedding_matrix_node2vec, ids)
+    embedding_custom = get_embedding(embedding_matrix_custom, logger, "Custom Embedder")
+    embedding_node2vec = get_embedding(embedding_matrix_node2vec, logger, "Node2Vec")
+    nodes_labels_custom = hdbscan_fit(logger, embedding_matrix_custom, ids, 'Custom Embedder')
+    nodes_labels_node2vec = hdbscan_fit(logger, embedding_matrix_node2vec, ids, 'Node2Vec')
     plot_hdbscan(embedding_custom, embedding_node2vec, nodes_labels_custom, nodes_labels_node2vec)

@@ -22,3 +22,6 @@ class CosineSimilarityLoss(tf.keras.losses.Loss):
         loss = tf.maximum(distance_positive - distance_negative + self.margin, 0.0)
         return tf.reduce_mean(loss)
     
+    def name():
+        return 'CosineDistanceLoss'
+    

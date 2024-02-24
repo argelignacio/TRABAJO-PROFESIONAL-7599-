@@ -6,6 +6,7 @@ import pandas as pd
 import umap
 import os
 from datetime import datetime
+import time 
 import sys
 sys.path.insert(0, os.path.abspath("../.."))
 
@@ -79,21 +80,29 @@ def plot_kmeans(embedding_custom, embedding_n2v, nodes_labels_custom, nodes_labe
     plt.savefig(os.path.join(plots_directory, filename))
 
 
-def kmeans_fit(logger, embedding_matrix, ids, n_clusters, init, n_init, random_state=3425):
+def kmeans_fit(logger, embedding_matrix, ids, n_clusters, init, n_init, method, random_state=3425):
+    start_fit = time.time()
     kmeans_cluster = KMeans(n_clusters=n_clusters, init=init, n_init=n_init, random_state=random_state).fit(embedding_matrix)
-    logger.info("KMeans fitted with n_clusters: " + str(n_clusters) + " init: " + str(init) + " n_init: " + str(n_init) + " random_state: " + str(random_state))
+    end_fit = time.time()
+    logger.info("KMeans over embedding from " + str(method) + " fitted with n_clusters: " + str(n_clusters) + " init: " + str(init) + " n_init: " + str(n_init) + " random_state: " + str(random_state))
+    logger.info(f'KMeans fit in: {(end_fit - start_fit)/60} minutes.')
     kmeans_labels = kmeans_cluster.labels_
     return pd.DataFrame(zip(ids, kmeans_labels), columns = ['node_ids','kmeans'])
 
-def get_embedding(embedding_matrix):
-    return umap.UMAP(n_components=2).fit(embedding_matrix)
+def get_embedding(embedding_matrix, logger, method):
+    logger.info(f'Reducing dimensions of embeddings generated with {method} using UMAP.')
+    start_proyection = time.time()
+    embeddings_reduced = umap.UMAP(n_components=2).fit(embedding_matrix)
+    end_proyection = time.time()
+    logger.info(f'Dimensions reduced using UMAP in {(end_proyection - start_proyection)/60} minutes')
+    return embeddings_reduced
 
 
 def run_kmeans(logger):
     embedding_matrix_custom, embedding_matrix_node2vec, ids = read_files()
-    embedding_custom = get_embedding(embedding_matrix_custom)
-    embedding_node2vec = get_embedding(embedding_matrix_node2vec)
-    nodes_labels_custom = kmeans_fit(logger, embedding_matrix_custom, ids, 6, 'k-means++', 300)
-    nodes_labels_node2vec = kmeans_fit(logger, embedding_matrix_node2vec, ids, 6, 'k-means++', 300)
+    embedding_custom = get_embedding(embedding_matrix_custom, logger, "Custom Embedder")
+    embedding_node2vec = get_embedding(embedding_matrix_node2vec, logger, "Node2Vec")
+    nodes_labels_custom = kmeans_fit(logger, embedding_matrix_custom, ids, 6, 'k-means++', 300, 'Custom Embedder')
+    nodes_labels_node2vec = kmeans_fit(logger, embedding_matrix_node2vec, ids, 6, 'k-means++', 300, 'Node2Vec')
     plot_elbow(embedding_matrix_custom, embedding_matrix_node2vec)
     plot_kmeans(embedding_custom, embedding_node2vec, nodes_labels_custom, nodes_labels_node2vec)

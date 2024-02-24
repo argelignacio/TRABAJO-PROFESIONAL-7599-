@@ -17,7 +17,7 @@ def main(level):
     executor.run_all()
 
     run_kmeans(logger)
-    run_hdbscan()
+    run_hdbscan(logger)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Script de ejemplo con registro')

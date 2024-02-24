@@ -1,12 +1,14 @@
 import tensorflow as tf
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Input, Embedding, Dense, Concatenate, GaussianNoise, Reshape
+import time
 
 class ModelBuilder():
-    def __init__(self, ids, loss, optimizer):
+    def __init__(self, ids, loss, optimizer, logger, embedding_dim=64):
+        logger.info(f'Creating model with {loss.name()} loss and the embedding of {embedding_dim} dim.')
         self.loss = loss
         self.optimizer = optimizer
-        self.embedder_dimension = 64
+        self.embedder_dimension = embedding_dim
         self.embedder = self.create_embedder(ids)
         self.wrapper = self.create_wrapper()
         self.trained = False
@@ -16,9 +18,13 @@ class ModelBuilder():
             return self.model_aux.get_layer(name="embedding").get_weights()
         raise Exception("Modelo no entrenado, emb basura.")
     
-    def fit(self, generator):
+    def fit(self, generator, logger):
+        logger.info('Train starting')
+        start_fit = time.time()
         callback = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=5, restore_best_weights=True)
         self.model.fit(generator, epochs=1000, callbacks=[callback])
+        end_fit = time.time()
+        logger.info(f'Model fit in: {(end_fit - start_fit)/60} minutes.')
         self.trained = True
         return self
 

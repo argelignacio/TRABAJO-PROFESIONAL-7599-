@@ -58,10 +58,10 @@ def pipeline_v2(df, logger):
     addresses_ids = create_ids(cleaned_df, logger)
 
     logger.debug("Creating model")
-    model = ModelBuilder(addresses_ids, EuclideanLoss, Adam)
+    model = ModelBuilder(addresses_ids, EuclideanLoss, Adam, logger, 64)
     
     generator = create_generator(cleaned_df, addresses_ids, logger)
-    embeddings = model.compile_model().fit(generator).get_embeddings()
+    embeddings = model.compile_model().fit(generator, logger).get_embeddings()
     return embeddings, addresses_ids
 
 
