@@ -104,5 +104,8 @@ def run_kmeans(logger):
     embedding_node2vec = get_embedding(embedding_matrix_node2vec, logger, "Node2Vec")
     nodes_labels_custom = kmeans_fit(logger, embedding_matrix_custom, ids, 6, 'k-means++', 300, 'Custom Embedder')
     nodes_labels_node2vec = kmeans_fit(logger, embedding_matrix_node2vec, ids, 6, 'k-means++', 300, 'Node2Vec')
+    current_time = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+    nodes_labels_custom.to_csv(f'kmeans_custom_{current_time}.csv', index=False)
+    nodes_labels_node2vec.to_csv(f'kmeans_n2v_{current_time}.csv', index=False)
     plot_elbow(embedding_matrix_custom, embedding_matrix_node2vec)
     plot_kmeans(embedding_custom, embedding_node2vec, nodes_labels_custom, nodes_labels_node2vec)
