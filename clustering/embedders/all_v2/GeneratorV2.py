@@ -36,11 +36,9 @@ class GeneratorTriplet(Sequence):
         df['gravity_const'] = weigth*(((df['gravity_const'] - gravity_const_mean) / gravity_const_std) + normalized_count_transactions)
         self.logger.debug("Dataframe reduced.")
         return df
-    
+
     def init_positives(self):
-        positives = {}
-        for from_add in tqdm(self.df['from_address']):
-            positives[from_add] = self.df[self.df.from_address == from_add]['to_address'].values
+        positives = self.df.groupby('from_address')['to_address'].apply(list).to_dict()
         self.logger.debug("Positives initialized.")
         return positives
     
