@@ -7,10 +7,10 @@ from vs_embedders.executor import Executor
 
 def main(level):
     logger = MyLogger(__name__, level=level, id=1)
-    n_clusters = 6
+    n_clusters = 5
     nodes_per_cluster = 300
-    intern_probability = 0.85
-    n_transactions = 3000
+    intern_probability = 0.55
+    n_transactions = 9000
     df = GeneratorFakeGraph.generate_fake_graph_df(logger, n_clusters, nodes_per_cluster, intern_probability, n_transactions)
     df.to_csv("fake_graph.csv", index=False)
     executor = Executor(logger, df)
