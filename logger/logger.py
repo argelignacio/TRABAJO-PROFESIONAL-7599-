@@ -1,20 +1,20 @@
 import logging
 from logging.handlers import RotatingFileHandler
 import os
-from datetime import datetime
+from utils.time import Time
 
 class MyLogger:
-    def __init__(self, name, log_file=None, level=logging.DEBUG, id = 0):
+    def __init__(self, name, log_folder, log_file=None, level=logging.DEBUG, id = 0):
         self.id = id
         self.logger = logging.getLogger(name)
         self.logger.setLevel(level)
         formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
         
         if log_file is None:
-            project_dir = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
-            log_dir = os.path.join(project_dir, "logs")
-            os.makedirs(log_dir, exist_ok=True)
-            log_file = os.path.join(log_dir, datetime.now().strftime("%Y-%m-%d") + ".log")
+            folder_path = os.path.join(os.getcwd(), "results", log_folder)
+            os.makedirs(folder_path, exist_ok=True)
+            file_name = f"logs.log"
+            log_file = os.path.join(folder_path, file_name)
 
         # Rotating file handler
         file_handler = RotatingFileHandler(log_file, mode='a', maxBytes=10*1024*1024, backupCount=5)

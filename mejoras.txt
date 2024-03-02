@@ -1,8 +1,6 @@
-1. agregar logs de cuanto tiempo tarda cada cosa que hacemos.
-2. no hardcodear ningun parametro de nada y usar variables para todo, y loguearlo.
-3. agregar un gestor de archivos de configuración para tener todo centralizado.
-4. incrementar el ID automáticamente.
-5. agregar a los plots subidos el ID de la ejecución.
 6. calcular resultados de la precisión de los clusters y loguearlo.
 7. diferenciar en los logs de los métodos de clustering para diferenciar que tipo de modelo se está ejecutando.
 8. refactor de clases (tener en cuenta hacer uso de inyección de dependencias, por ejemplo con el logger)
+9. intentar plotear en mas dimensiones
+10. agregar linter
+11. agregar en config para correr sobre data real o sobre data fake. loggear eso.

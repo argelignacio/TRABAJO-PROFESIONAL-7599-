@@ -8,12 +8,13 @@ import os
 sys.path.insert(0, os.path.abspath("../../.."))
 
 class GeneratorTriplet(Sequence):
-    def __init__(self, df, ids, batch_size, logger):
+    def __init__(self, df, ids, config, logger):
         self.logger = logger
+        self.config = config
         self.df = self.reduce_df(df)
         self.act_index = 0
         self.ids = ids
-        self.batch_size = batch_size
+        self.batch_size = int(config["GENERATOR_V2"]["batch_size"])
         self.limit = int(np.ceil(len(self.df) / self.batch_size))
         self.positives = self.init_positives()
 
@@ -30,7 +31,7 @@ class GeneratorTriplet(Sequence):
         
         normalized_count_transactions = (df['count_transactions'] - df['count_transactions'].mean()) / df['count_transactions'].std()
 
-        weigth = 6
+        weigth = int(self.config["GENERATOR_V2"]["weigth"])
         gravity_const_mean = df['gravity_const'].mean()
         gravity_const_std = df['gravity_const'].std()
         df['gravity_const'] = weigth*(((df['gravity_const'] - gravity_const_mean) / gravity_const_std) + normalized_count_transactions)
@@ -84,4 +85,5 @@ class GeneratorTriplet(Sequence):
         # el fake target simunla lo que sería aprendizaje supervisado        
         fake_target = tf.convert_to_tensor(np.array([1]*self.batch_size))
 
-        return ([anchor, metadata, positive, metadata, negative, metadata], [fake_target]*6)
+        true_target = [anchor, metadata, positive, metadata, negative, metadata]
+        return (true_target, [fake_target] * len(true_target))

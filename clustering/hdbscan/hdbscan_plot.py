@@ -11,15 +11,15 @@ import sys
 sys.path.insert(0, os.path.abspath("../.."))
 
 
-def read_files():
-    with open("vs_embedders/ids.pkl", "rb") as file:
+def read_files(folder_name):
+    with open(f"results/{folder_name}/ids.pkl", "rb") as file:
         ids = pickle.load(file)
-    embedding_matrix_custom = np.load("vs_embedders/embedding_matrix.npy", allow_pickle=True)
-    embedding_matrix_node2vec = np.load("vs_embedders/node2vec_embedding_matrix.npy", allow_pickle=True)
+    embedding_matrix_custom = np.load(f"results/{folder_name}/embedding_matrix.npy", allow_pickle=True)
+    embedding_matrix_node2vec = np.load(f"results/{folder_name}/node2vec_embedding_matrix.npy", allow_pickle=True)
     return embedding_matrix_custom, embedding_matrix_node2vec, ids
 
 
-def plot_hdbscan(embedding_custom, embedding_n2v, nodes_labels_custom, nodes_labels_n2v):
+def plot_hdbscan(embedding_custom, embedding_n2v, nodes_labels_custom, nodes_labels_n2v, folder_name):
     _, axs = plt.subplots(1, 2, figsize=(20, 6))
 
     axs[0].scatter(embedding_custom.embedding_[:, 0], embedding_custom.embedding_[:, 1], alpha=0.4, c=nodes_labels_custom.hdbscan, cmap='viridis')
@@ -32,40 +32,33 @@ def plot_hdbscan(embedding_custom, embedding_n2v, nodes_labels_custom, nodes_lab
     axs[1].set_aspect('equal', 'datalim')
     axs[1].set_title('HDBSCAN: Embedding node2vec')
 
-    current_time = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-    filename = f'hdbscan_{current_time}.png'
+    filename = f'hdbscan.png'
     parent_directory = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir, os.pardir))
-    plots_directory = os.path.join(parent_directory, "plots")
+    folder_path = os.path.join(parent_directory, "results", folder_name)
+    os.makedirs(folder_path, exist_ok=True)
 
-    if not os.path.exists(plots_directory):
-        os.makedirs(plots_directory)
-
-    plt.savefig(os.path.join(plots_directory, filename))
+    plt.savefig(os.path.join(folder_path, filename))
 
 
 def hdbscan_fit(logger, embedding_matrix, ids, method):
     start_fit = time.time()
     hdbs_model = hdbscan.HDBSCAN().fit(embedding_matrix)
     end_fit = time.time()
-    logger.info("HDBSCAN over embedding from " + str(method))
-    logger.info(f'HDBSCAN fit in: {(end_fit - start_fit)/60} minutes.')
+    logger.info(f"HDBSCAN over embedding from {str(method)} fit in: {(end_fit - start_fit)/60} minutes")
     hbds_scan_labels = hdbs_model.labels_
     return pd.DataFrame(zip(ids, hbds_scan_labels), columns = ['node_ids','hdbscan'])
 
-
 def get_embedding(embedding_matrix, logger, method):
-    logger.info(f'Reducing dimensions of embeddings generated with {method} using UMAP.')
     start_proyection = time.time()
     embeddings_reduced = umap.UMAP(n_components=2).fit(embedding_matrix)
     end_proyection = time.time()
-    logger.info(f'Dimensions reduced using UMAP in {(end_proyection - start_proyection)/60} minutes')
+    logger.info(f'Dimensions reduced with {method} using UMAP in {(end_proyection - start_proyection)/60} minutes')
     return embeddings_reduced
 
-
-def run_hdbscan(logger):
-    embedding_matrix_custom, embedding_matrix_node2vec, ids = read_files()
+def run_hdbscan(logger, _config, folder_name):
+    embedding_matrix_custom, embedding_matrix_node2vec, ids = read_files(folder_name)
     embedding_custom = get_embedding(embedding_matrix_custom, logger, "Custom Embedder")
     embedding_node2vec = get_embedding(embedding_matrix_node2vec, logger, "Node2Vec")
     nodes_labels_custom = hdbscan_fit(logger, embedding_matrix_custom, ids, 'Custom Embedder')
     nodes_labels_node2vec = hdbscan_fit(logger, embedding_matrix_node2vec, ids, 'Node2Vec')
-    plot_hdbscan(embedding_custom, embedding_node2vec, nodes_labels_custom, nodes_labels_node2vec)
+    plot_hdbscan(embedding_custom, embedding_node2vec, nodes_labels_custom, nodes_labels_node2vec, folder_name)

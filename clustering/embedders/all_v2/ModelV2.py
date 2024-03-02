@@ -4,11 +4,13 @@ from tensorflow.keras.layers import Input, Embedding, Dense, Concatenate, Gaussi
 import time
 
 class ModelBuilder():
-    def __init__(self, ids, loss, optimizer, logger, embedding_dim=64):
-        logger.info(f'Creating model with {loss.name()} loss and the embedding of {embedding_dim} dim.')
+    def __init__(self, ids, loss, optimizer, logger, model_config):
+        self.model_config = model_config
+        self.embedding_dim = int(self.model_config["embedding_dim"])
+        self.logger = logger
+        logger.info(f'Creating model with {loss.name()} loss and the embedding of {self.embedding_dim} dim.')
         self.loss = loss
         self.optimizer = optimizer
-        self.embedder_dimension = embedding_dim
         self.embedder = self.create_embedder(ids)
         self.wrapper = self.create_wrapper()
         self.trained = False
@@ -18,27 +20,28 @@ class ModelBuilder():
             return self.model_aux.get_layer(name="embedding").get_weights()
         raise Exception("Modelo no entrenado, emb basura.")
     
-    def fit(self, generator, logger):
-        logger.info('Train starting')
+    def fit(self, generator):
+        self.logger.info('Train starting')
+        conf = self.model_config
         start_fit = time.time()
-        callback = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=5, restore_best_weights=True)
-        self.model.fit(generator, epochs=1000, callbacks=[callback])
+        callback = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=int(conf["patience"]), restore_best_weights=True)
+        self.model.fit(generator, epochs=int(conf["epochs"]), callbacks=[callback])
         end_fit = time.time()
-        logger.info(f'Model fit in: {(end_fit - start_fit)/60} minutes.')
+        self.logger.info(f'Model fit in: {(end_fit - start_fit)/60} minutes.')
         self.trained = True
         return self
 
-    def compile_model(self, lr=5e-4):
+    def compile_model(self):
         self.model.compile(
-            optimizer=self.optimizer(lr),
+            optimizer=self.optimizer(float(self.model_config["learning_rate"])),
             loss=self.loss()
         )
         return self
 
     def create_embedder(self, ids):
         input_aux = Input(1)
-        x = Embedding(len(ids), self.embedder_dimension)(input_aux)
-        output_aux = GaussianNoise(0.005)(x)
+        x = Embedding(len(ids), self.embedding_dim)(input_aux)
+        output_aux = GaussianNoise(float(self.model_config["gaussian_noise"]))(x)
         self.model_aux = Model(input_aux, output_aux)
         return self.model_aux
 
@@ -49,6 +52,8 @@ class ModelBuilder():
         self.model.summary()
 
     def create_wrapper(self):
+        conf = self.model_config
+
         input_layer_anchor = Input(1)
         input_layer_positive = Input(1)
         input_layer_negative = Input(1)
@@ -56,9 +61,10 @@ class ModelBuilder():
         metadata2 = Input(1)
         metadata3 = Input(1)
 
-        x_a = Reshape((self.embedder_dimension,))(self.model_aux(input_layer_anchor))
-        x_p = Reshape((self.embedder_dimension,))(self.model_aux(input_layer_positive))
-        x_n = Reshape((self.embedder_dimension,))(self.model_aux(input_layer_negative))
+        embedding_dim = int(conf["embedding_dim"])
+        x_a = Reshape((embedding_dim,))(self.model_aux(input_layer_anchor))
+        x_p = Reshape((embedding_dim,))(self.model_aux(input_layer_positive))
+        x_n = Reshape((embedding_dim,))(self.model_aux(input_layer_negative))
 
         merged_a = Concatenate()([x_a, metadata])
         merged_p = Concatenate()([x_p, metadata2])

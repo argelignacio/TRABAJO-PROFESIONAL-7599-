@@ -32,36 +32,34 @@ def create_ids(df, logger):
     logger.debug("Ids created")
     return ids
 
-def create_generator(df, ids, logger):
-    generator = GeneratorTriplet(df, ids, 64, logger)
+def create_generator(df, ids, logger, config):
+    generator = GeneratorTriplet(df, ids, config, logger)
     logger.debug("Generator created")
     return generator
 
-def train_model(model, generator):
-    callback = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=5, restore_best_weights=True)
-    model.fit(generator, epochs=1000, callbacks=[callback])
-
-def pipeline(files, logger):
+def pipeline(files, logger, config):
     df = read_files(files)
     cleaned_df = clean_nodes(df)
     addresses_ids = create_ids(cleaned_df, logger)
 
-    model = ModelBuilder(addresses_ids, EuclideanLoss, Adam)
+    model_v2_config = config["MODEL_V2"]
+    model = ModelBuilder(addresses_ids, EuclideanLoss, Adam, logger, model_v2_config)
 
-    generator = create_generator(cleaned_df, addresses_ids, logger)
+    generator = create_generator(cleaned_df, addresses_ids, logger, config)
     embeddings = model.compile_model().fit(generator).get_embeddings()
     return embeddings
 
-def pipeline_v2(df, logger):
+def pipeline_v2(df, logger, config):
     set_gpu(logger)
     cleaned_df = clean_nodes(df)
     addresses_ids = create_ids(cleaned_df, logger)
 
     logger.debug("Creating model")
-    model = ModelBuilder(addresses_ids, EuclideanLoss, Adam, logger, 64)
+    model_v2_config = config["MODEL_V2"]
+    model = ModelBuilder(addresses_ids, EuclideanLoss, Adam, logger, model_v2_config)
     
-    generator = create_generator(cleaned_df, addresses_ids, logger)
-    embeddings = model.compile_model().fit(generator, logger).get_embeddings()
+    generator = create_generator(cleaned_df, addresses_ids, logger, config)
+    embeddings = model.compile_model().fit(generator).get_embeddings()
     return embeddings, addresses_ids
 
 
