@@ -1,6 +1,10 @@
 6. calcular resultados de la precisión de los clusters y loguearlo.
-7. diferenciar en los logs de los métodos de clustering para diferenciar que tipo de modelo se está ejecutando.
+
 8. refactor de clases (tener en cuenta hacer uso de inyección de dependencias, por ejemplo con el logger)
+8.1. os.path por ejemplo
+
 9. intentar plotear en mas dimensiones
+
 10. agregar linter
+
 11. agregar en config para correr sobre data real o sobre data fake. loggear eso.
