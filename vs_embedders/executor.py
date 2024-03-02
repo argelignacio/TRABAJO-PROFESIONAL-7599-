@@ -8,21 +8,17 @@ sys.path.insert(0, os.path.abspath(".."))
 from clustering.embedders.processing_frames import pipeline_v2
 
 class Executor:
-    def __init__(self, logger, df, config, folder_name) -> None:
+    def __init__(self, logger, df, config, file_management) -> None:
         self.logger = logger
         self.df = df
         self.config = config
-        self.folder_name = folder_name
+        self.file_management = file_management
 
     def _custom_embedding(self):
         embedding_matrix, ids = pipeline_v2(self.df, self.logger, self.config)
-        folder_path = os.path.join(os.getcwd(), "results", self.folder_name)
-        os.makedirs(folder_path, exist_ok=True)
-
-        np.array(embedding_matrix[0]).dump(os.path.join(folder_path, f"embedding_matrix.npy"))
+        self.file_management.save_npy("embedding_matrix.npy", embedding_matrix[0])
         self.logger.debug(f"Saved file embedding_matrix.npy")
-
-        pkl.dump(ids, open(os.path.join(folder_path, f"ids.pkl"), "wb"))
+        self.file_management.save_pkl("ids.pkl", ids)
         self.logger.debug(f"Saved file ids.pkl")
 
     def _node2vec_embedding(self, dimensions=128, walk_length=16, num_walks=100, workers=2, window=10, min_count=1, batch_words=4):
@@ -33,10 +29,7 @@ class Executor:
         model_2 = node2vec.fit(window=window, min_count=min_count, batch_words=batch_words)
         self.logger.info("Node2Vec model fitted with window: " + str(window) + " min_count: " + str(min_count) + " batch_words: " + str(batch_words))
         
-        folder_path = os.path.join(os.getcwd(), "results", self.folder_name)
-        os.makedirs(folder_path, exist_ok=True)
-        
-        np.array(model_2.wv.vectors).dump(os.path.join(folder_path, f"node2vec_embedding_matrix.npy"))
+        self.file_management.save_npy("node2vec_embedding_matrix.npy", np.array(model_2.wv.vectors))
         self.logger.debug(f"Saved file node2vec_embedding_matrix.npy")
 
     def run_all(self):

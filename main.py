@@ -8,6 +8,7 @@ import configparser
 import uuid
 import os
 from utils.time import Time
+from utils.file_management import FileManagement
 
 def main(level, config):
     hash = str(uuid.uuid4())
@@ -15,20 +16,21 @@ def main(level, config):
     folder_name = f"{time}_{hash[:8]}"
     logger = MyLogger(__name__, folder_name, level=level, id=hash)
 
+    file_management = FileManagement(os.path.join(os.getcwd(), "results", folder_name))
+
     n_clusters = int(config["FAKE_GRAPH"]["n_clusters"])
     nodes_per_cluster = int(config["FAKE_GRAPH"]["nodes_per_cluster"])
     intern_probability = float(config["FAKE_GRAPH"]["intern_probability"])
     n_transactions = int(config["FAKE_GRAPH"]["n_transactions"])
 
     df = GeneratorFakeGraph.generate_fake_graph_df(logger, n_clusters, nodes_per_cluster, intern_probability, n_transactions)
-    folder_path = os.path.join(os.getcwd(), "results", folder_name)
-    os.makedirs(folder_path, exist_ok=True)
-    df.to_csv(os.path.join(folder_path, f"fake_graph.csv"), index=False)
-    executor = Executor(logger, df, config, folder_name)
+    file_management.save_df("fake_graph.csv", df)
+
+    executor = Executor(logger, df, config, file_management)
     executor.run_all()
 
-    run_kmeans(logger, config, folder_name)
-    run_hdbscan(logger, config, folder_name)
+    run_kmeans(logger, config, file_management)
+    run_hdbscan(logger, config, file_management)
 
 if __name__ == "__main__":
 
