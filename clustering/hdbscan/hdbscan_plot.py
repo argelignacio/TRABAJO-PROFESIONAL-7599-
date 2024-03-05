@@ -1,8 +1,11 @@
 import hdbscan
+import numpy as np
 import matplotlib.pyplot as plt
+import pickle
 import pandas as pd
 import umap
 import os
+from datetime import datetime
 import time
 import sys
 sys.path.insert(0, os.path.abspath("../.."))
@@ -52,4 +55,8 @@ def run_hdbscan(logger, _config, file_management):
     embedding_node2vec = get_embedding(embedding_matrix_node2vec, logger, "Node2Vec")
     nodes_labels_custom = hdbscan_fit(logger, embedding_matrix_custom, ids, 'Custom Embedder')
     nodes_labels_node2vec = hdbscan_fit(logger, embedding_matrix_node2vec, ids, 'Node2Vec')
+
+    file_management.save_df('hdbscan_custom.csv', nodes_labels_custom)
+    file_management.save_df('hdbscan_n2v.csv', nodes_labels_node2vec)
     plot_hdbscan(embedding_custom, embedding_node2vec, nodes_labels_custom, nodes_labels_node2vec, file_management)
+    return nodes_labels_custom, nodes_labels_node2vec

@@ -77,14 +77,19 @@ def get_embedding(embedding_matrix, logger, method):
 
 
 def run_kmeans(logger, config, file_management):
-    n_init = int(config["KMEANS"]["n_clusters"])
-    n_clusters = int(config["KMEANS"]["n_init"])
+    n_init = int(config["KMEANS"]["n_init"])
+    n_clusters = int(config["KMEANS"]["n_clusters"])
     embedding_matrix_custom, embedding_matrix_node2vec, ids = read_files(file_management)
     embedding_custom = get_embedding(embedding_matrix_custom, logger, "Custom Embedder")
     embedding_node2vec = get_embedding(embedding_matrix_node2vec, logger, "Node2Vec")
+
     nodes_labels_custom = kmeans_fit(logger, embedding_matrix_custom, ids, n_clusters, 'k-means++', n_init, 'Custom Embedder')
     nodes_labels_node2vec = kmeans_fit(logger, embedding_matrix_node2vec, ids, n_clusters, 'k-means++', n_init, 'Node2Vec')
-    file_management.save_df('kmeans_custom_csv', nodes_labels_custom)
+    
+    file_management.save_df('kmeans_custom.csv', nodes_labels_custom)
     file_management.save_df('kmeans_n2v.csv', nodes_labels_node2vec)
+
     plot_elbow(embedding_matrix_custom, embedding_matrix_node2vec, file_management)
     plot_kmeans(embedding_custom, embedding_node2vec, nodes_labels_custom, nodes_labels_node2vec, file_management)
+
+    return nodes_labels_custom, nodes_labels_node2vec
