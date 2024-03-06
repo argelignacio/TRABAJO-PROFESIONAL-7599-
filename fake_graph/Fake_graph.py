@@ -34,7 +34,7 @@ class GeneratorFakeGraph:
                 'cluster_from': id_1[1], 
                 'cluster_to': id_2[1], 
                 'block_timestamp': 1, 
-                'value': (random.random()*200)
+                'value': (random.random()*1000)
                 }
             
 

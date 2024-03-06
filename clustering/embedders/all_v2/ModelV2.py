@@ -1,10 +1,12 @@
 import tensorflow as tf
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Input, Embedding, Dense, Concatenate, GaussianNoise, Reshape
+import tensorflow.keras as keras
 import time
 
 class ModelBuilder():
     def __init__(self, ids, loss, optimizer, logger, model_config):
+        keras.backend.clear_session()
         self.model_config = model_config
         self.embedding_dim = int(self.model_config["embedding_dim"])
         self.logger = logger
