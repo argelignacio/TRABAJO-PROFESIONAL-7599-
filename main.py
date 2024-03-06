@@ -1,7 +1,7 @@
 import argparse
 from fake_graph.Fake_graph import GeneratorFakeGraph
-from clustering.hdbscan.hdbscan_plot import run_hdbscan
-from clustering.kmeans.kmeans_plot import run_kmeans
+from clustering.hdbscan.hdbscan_plot import Hdbscan
+from clustering.kmeans.kmeans_plot import Kmeans
 from logger.logger import MyLogger
 from vs_embedders.executor import Executor
 import configparser
@@ -32,35 +32,37 @@ def mode_without_err(x):
         return mode[0]
     return mode
 
-def calculate_precision(columns, indexes, mapping, tmp_mapping, full_nodes, logger, file_management):
-    for col in columns:
-        for i in indexes:
-            mapping[col] = mapping.get(col, {})
-            if isinstance(tmp_mapping.loc[i, col], np.ndarray):
-                mapping[col][tmp_mapping.loc[i, col][0]] = i
-            else:
-                mapping[col][tmp_mapping.loc[i, col]] = i
+def calculate_precision(column, indexes, mapping, tmp_mapping, full_nodes, logger, file_management):
+    for i in indexes:
+        mapping[column] = mapping.get(column, {})
+        if isinstance(tmp_mapping.loc[i], np.ndarray):
+            mapping[column][tmp_mapping.loc[i][0]] = i
+        else:
+            mapping[column][tmp_mapping.loc[i]] = i
     
-    for col in columns:
-        full_nodes[f"{col}_mapped"] = full_nodes.apply(lambda x: mapping[col].get(int(x[col])), axis=1)
+    full_nodes[f"{column}_mapped"] = full_nodes.apply(lambda x: mapping[column].get(int(x[column])), axis=1)
 
     result = dict()
-    for col in ['hdbscan_custom_mapped', 'hdbscan_node2vec_mapped', 'kmeans_custom_mapped', 'kmeans_node2vec_mapped']:
-        result_act = list(full_nodes.apply(lambda x: x[col] == x.real_cluster, axis=1).value_counts())
-        if len(result_act) == 1:
-            logger.info(f"Precision_{col}: 1")
-            result[f"Precision_{col}"] = result.get(f"Precision_{col}", 1)
+    
+    result_act = list(full_nodes.apply(lambda x: x[column] == x.real_cluster, axis=1).value_counts())
+    print(result_act)
+    if len(result_act) == 1:
+        if full_nodes.apply(lambda x: x[column] == x.real_cluster, axis=1).value_counts().index[0]:
+            logger.info(f"Precision_{column}: 1")
+            result[f"Precision_{column}"] = result.get(f"Precision_{column}", 1)
         else:
-            precision = result.get(f"Precision_{col}", (int(result_act[1]) / (int(result_act[0])+int(result_act[1]))))
-            logger.info(f"Precision_{col}: {precision}")
-            result[f"Precision_{col}"] = precision
+            logger.info(f"Precision_{column}: 0")
+            result[f"Precision_{column}"] = result.get(f"Precision_{column}", 0)
+    else:
+        precision = result.get(f"Precision_{column}", (int(result_act[1]) / (int(result_act[0])+int(result_act[1]))))
+        logger.info(f"Precision_{column}: {precision}")
+        result[f"Precision_{column}"] = precision
 
     for_df = {}
     for key in result.keys():
         for_df[key] = [result[key]]
 
-    df_result = pd.DataFrame(for_df)
-    file_management.save_df("df_result.csv", df_result)
+    return for_df
 
 def main(config, logger, folder_name):
     file_management = FileManagement(os.path.join(os.getcwd(), "results", folder_name))
@@ -74,27 +76,37 @@ def main(config, logger, folder_name):
     nodes_labels_custom_kmeans = kmeans_processor.run("Custom Embedder")
     nodes_labels_node2vec_kmeans = kmeans_processor.run("Node2Vec")
 
-    nodes_labels_custom_hdbscan, nodes_labels_node2vec_hdbscan = run_hdbscan(logger, config, file_management)
+    hdbscan_processor = Hdbscan(logger, config, file_management)
+    nodes_labels_custom_hdbscan = hdbscan_processor.run("Custom Embedder")
+    nodes_labels_node2vec_hdbscan = hdbscan_processor.run("Node2Vec")
 
-    full_nodes = nodes_labels_node2vec_hdbscan\
-        .merge(nodes_labels_custom_hdbscan, left_on='node_ids', right_on='node_ids', suffixes=('_node2vec', '_custom'))\
-        .merge(nodes_labels_custom_kmeans, left_on='node_ids', right_on='node_ids')\
-        .merge(nodes_labels_node2vec_kmeans, left_on='node_ids', right_on='node_ids', suffixes=('_custom', '_node2vec'))
+    # full_nodes = nodes_labels_node2vec_hdbscan\
+    #     .merge(nodes_labels_custom_hdbscan, left_on='node_ids', right_on='node_ids', suffixes=('_node2vec', '_custom'))\
+    #     .merge(nodes_labels_custom_kmeans, left_on='node_ids', right_on='node_ids')\
+    #     .merge(nodes_labels_node2vec_kmeans, left_on='node_ids', right_on='node_ids', suffixes=('_custom', '_node2vec'))
 
     clusters = dict()
-
     df.apply(lambda x: set_clusters(x, clusters), axis=1)
-    full_nodes['real_cluster'] = full_nodes.apply(lambda x: clusters.get(x.node_ids), axis=1)
+    
+    dfs = [nodes_labels_custom_hdbscan, nodes_labels_node2vec_hdbscan, nodes_labels_custom_kmeans, nodes_labels_node2vec_kmeans]
+    methods = ['hdbscan_custom', 'hdbscan_node2vec', 'kmeans_custom', 'kmeans_node2vec']
 
-    mapping = dict()
-    columns = ['hdbscan_custom', 'hdbscan_node2vec', 'kmeans_custom', 'kmeans_node2vec']
+    for_df = {}
+    for i in range(len(dfs)):
+        df = dfs[i]
+        method = methods[i]
+        df.rename(columns={df.columns[1]: method}, inplace=True)
+        df['real_cluster'] = df.apply(lambda x: clusters.get(x.node_ids), axis=1)
+        
+        mapping = dict()
+        tmp_mapping = df.groupby(['real_cluster'])[method].aggregate(mode_without_err)
+        indexes = df.real_cluster.value_counts().index
 
-    tmp_mapping = full_nodes.groupby(['real_cluster'])[columns].aggregate(mode_without_err)
-    indexes = full_nodes.real_cluster.value_counts().index
+        presicion = calculate_precision(method, indexes, mapping, tmp_mapping, df, logger, file_management)
+        for_df = for_df | presicion
 
-    full_nodes["real_cluster_modified"] = full_nodes.apply(lambda x: mapping.get(x.real_cluster), axis=1)
-
-    calculate_precision(columns, indexes, mapping, tmp_mapping, full_nodes, logger, file_management)
+    df_result = pd.DataFrame(for_df)
+    file_management.save_df("df_result.csv", df_result)
 
 if __name__ == "__main__":
     config = configparser.ConfigParser()
