@@ -3,7 +3,7 @@ from fake_graph.Fake_graph import GeneratorFakeGraph
 from clustering.hdbscan.hdbscan_plot import Hdbscan
 from clustering.kmeans.kmeans_plot import Kmeans
 from logger.logger import MyLogger
-from vs_embedders.executor import Executor
+from clustering.embedders.processing_frames import pipeline
 import configparser
 import uuid
 import os
@@ -65,49 +65,19 @@ def calculate_precision(column, indexes, mapping, tmp_mapping, full_nodes, logge
 
 def main(config, logger, folder_name):
     file_management = FileManagement(os.path.join(os.getcwd(), "results", folder_name))
+    
+    files = ["../datos/2023/July/2023-07-02.csv"]
 
-    df = run_fake_graph(logger, file_management)
-
-    # executor = Executor(logger, df, config, file_management)
-    # executor.run_all()
+    embedding_matrix, ids = pipeline(files, logger, config)
+    file_management.save_npy("embedding_matrix.npy", embedding_matrix[0])
+    logger.debug(f"Saved file embedding_matrix.npy")
+    file_management.save_pkl("ids.pkl", ids)
+    logger.debug(f"Saved file ids.pkl")
 
     kmeans_processor = Kmeans(logger, config, file_management)
-    nodes_labels_custom_kmeans = kmeans_processor.run("Custom Embedder")
-    # nodes_labels_node2vec_kmeans = kmeans_processor.run("Node2Vec")
-
+    kmeans_processor.run("Custom Embedder")
     hdbscan_processor = Hdbscan(logger, config, file_management)
-    nodes_labels_custom_hdbscan = hdbscan_processor.run("Custom Embedder")
-    # # nodes_labels_node2vec_hdbscan = hdbscan_processor.run("Node2Vec")
-
-    # full_nodes = nodes_labels_node2vec_hdbscan\
-    #     .merge(nodes_labels_custom_hdbscan, left_on='node_ids', right_on='node_ids', suffixes=('_node2vec', '_custom'))\
-    #     .merge(nodes_labels_custom_kmeans, left_on='node_ids', right_on='node_ids')\
-    #     .merge(nodes_labels_node2vec_kmeans, left_on='node_ids', right_on='node_ids', suffixes=('_custom', '_node2vec'))
-
-    clusters = dict()
-    df.apply(lambda x: set_clusters(x, clusters), axis=1)
-    
-    # dfs = [nodes_labels_custom_hdbscan, nodes_labels_node2vec_hdbscan, nodes_labels_custom_kmeans, nodes_labels_node2vec_kmeans]
-    dfs = [nodes_labels_custom_hdbscan, nodes_labels_custom_kmeans]
-    # methods = ['hdbscan_custom', 'hdbscan_node2vec', 'kmeans_custom', 'kmeans_node2vec']
-    methods = ['hdbscan_custom', 'kmeans_custom']
-
-    for_df = {}
-    for i in range(len(dfs)):
-        df = dfs[i]
-        method = methods[i]
-        df.rename(columns={df.columns[1]: method}, inplace=True)
-        df['real_cluster'] = df.apply(lambda x: clusters.get(x.node_ids, 0), axis=1)
-        
-        mapping = dict()
-        tmp_mapping = df.groupby(['real_cluster'])[method].aggregate(mode_without_err)
-        indexes = df.real_cluster.value_counts().index
-
-        presicion = calculate_precision(method, indexes, mapping, tmp_mapping, df, logger, file_management)
-        for_df = for_df | presicion
-
-    df_result = pd.DataFrame(for_df)
-    file_management.save_df("df_result.csv", df_result)
+    hdbscan_processor.run("Custom Embedder")
 
 if __name__ == "__main__":
     config = configparser.ConfigParser()
@@ -120,17 +90,8 @@ if __name__ == "__main__":
     parser.add_argument('--level', choices=choices, default='INFO', help=message)
     args = parser.parse_args()
 
-    hash = "b62de6d5-2bf3-4cc0-b8b4-254a34927063"
-    time = "2024-03-05 20:26:22"
-
-    # for i in range(0, int(config["RUNNING"]["n"])):
-    #     folder_name = f"{time}_{i}_{hash[:8]}"
-    #     logger = MyLogger(__name__, folder_name, level=args.level, id=hash)
-        
-    #     local_config = config
-    #     local_config["KMEANS"] = config[f"KMEANS_{i}"]
-    #     local_config["FAKE_GRAPH"] = config[f"FAKE_GRAPH_{i}"]
-    #     main(local_config, logger, folder_name)
+    hash = str(uuid.uuid4())
+    time = Time().datetime()
 
     folder_name = f"{time}_{hash[:8]}"
     logger = MyLogger(__name__, folder_name, level=args.level, id=hash)
