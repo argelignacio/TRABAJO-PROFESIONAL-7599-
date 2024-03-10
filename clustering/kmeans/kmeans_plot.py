@@ -3,7 +3,8 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import umap
 import os
-import time 
+import time
+from tqdm import tqdm
 import sys
 sys.path.insert(0, os.path.abspath("../.."))
 
@@ -24,10 +25,11 @@ class Kmeans():
 
     def plot_elbow(self, embedding_matrix, method):
         distortions = []
-        K = range(3, 16)
+        K = range(1, self.n_clusters, 10)
 
-        for k in K:
-            k_cluster1 = KMeans(n_clusters=k, max_iter=500, random_state=3425).fit(embedding_matrix)
+        for k in tqdm(K):
+            self.logger.info(f"n_iter: {k}")
+            k_cluster1 = KMeans(n_clusters=k, init=self.init, n_init=self.n_init, random_state=3425).fit(embedding_matrix)
             k_cluster1.fit(embedding_matrix)
             distortions.append(k_cluster1.inertia_)
 
@@ -66,9 +68,9 @@ class Kmeans():
     def run_kmeans(self, method, name_npy, name_csv):
         embedding, ids = self.read_files(name_npy)
         embedding_reduced = self.get_embedding(embedding, method)
+        # self.plot_elbow(embedding, method)
         nodes_labels = self.kmeans_fit(embedding, ids, method)
         self.file_management.save_df(name_csv, nodes_labels)
-        self.plot_elbow(embedding, method)
         self.plot_kmeans(embedding_reduced, nodes_labels, method)
         return nodes_labels
     

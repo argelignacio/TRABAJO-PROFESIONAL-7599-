@@ -1,6 +1,7 @@
 import tensorflow as tf
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Input, Embedding, Dense, Concatenate, GaussianNoise, Reshape
+from keras.callbacks import LearningRateScheduler
 import tensorflow.keras as keras
 import time
 
@@ -21,13 +22,14 @@ class ModelBuilder():
         if self.trained:
             return self.model_aux.get_layer(name="embedding").get_weights()
         raise Exception("Modelo no entrenado, emb basura.")
-    
+
     def fit(self, generator):
         self.logger.info('Train starting')
         conf = self.model_config
         start_fit = time.time()
-        callback = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=int(conf["patience"]), restore_best_weights=True)
-        self.model.fit(generator, epochs=int(conf["epochs"]), callbacks=[callback])
+
+        earlyStoppingCallback = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=int(conf["patience"]), restore_best_weights=True)
+        self.model.fit(generator, epochs=int(conf["epochs"]), callbacks=[earlyStoppingCallback])
         end_fit = time.time()
         self.logger.info(f'Model fit in: {(end_fit - start_fit)/60} minutes.')
         self.trained = True
@@ -35,7 +37,7 @@ class ModelBuilder():
 
     def compile_model(self):
         self.model.compile(
-            optimizer=self.optimizer(float(self.model_config["learning_rate"])),
+            optimizer=self.optimizer(lr=float(self.model_config["learning_rate"])),
             loss=self.loss()
         )
         return self

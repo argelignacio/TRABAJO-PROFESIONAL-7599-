@@ -68,29 +68,24 @@ def main(config, logger, folder_name):
 
     df = run_fake_graph(logger, file_management)
 
-    # executor = Executor(logger, df, config, file_management)
-    # executor.run_all()
+    executor = Executor(logger, df, config, file_management)
+    executor.run_all()
 
     kmeans_processor = Kmeans(logger, config, file_management)
     nodes_labels_custom_kmeans = kmeans_processor.run("Custom Embedder")
-    # nodes_labels_node2vec_kmeans = kmeans_processor.run("Node2Vec")
+    nodes_labels_node2vec_kmeans = kmeans_processor.run("Node2Vec")
 
     hdbscan_processor = Hdbscan(logger, config, file_management)
     nodes_labels_custom_hdbscan = hdbscan_processor.run("Custom Embedder")
-    # # nodes_labels_node2vec_hdbscan = hdbscan_processor.run("Node2Vec")
-
-    # full_nodes = nodes_labels_node2vec_hdbscan\
-    #     .merge(nodes_labels_custom_hdbscan, left_on='node_ids', right_on='node_ids', suffixes=('_node2vec', '_custom'))\
-    #     .merge(nodes_labels_custom_kmeans, left_on='node_ids', right_on='node_ids')\
-    #     .merge(nodes_labels_node2vec_kmeans, left_on='node_ids', right_on='node_ids', suffixes=('_custom', '_node2vec'))
+    nodes_labels_node2vec_hdbscan = hdbscan_processor.run("Node2Vec")
 
     clusters = dict()
     df.apply(lambda x: set_clusters(x, clusters), axis=1)
     
-    # dfs = [nodes_labels_custom_hdbscan, nodes_labels_node2vec_hdbscan, nodes_labels_custom_kmeans, nodes_labels_node2vec_kmeans]
-    dfs = [nodes_labels_custom_hdbscan, nodes_labels_custom_kmeans]
-    # methods = ['hdbscan_custom', 'hdbscan_node2vec', 'kmeans_custom', 'kmeans_node2vec']
-    methods = ['hdbscan_custom', 'kmeans_custom']
+    dfs = [nodes_labels_custom_hdbscan, nodes_labels_node2vec_hdbscan, nodes_labels_custom_kmeans, nodes_labels_node2vec_kmeans]
+    # dfs = [nodes_labels_custom_hdbscan, nodes_labels_custom_kmeans]
+    methods = ['hdbscan_custom', 'hdbscan_node2vec', 'kmeans_custom', 'kmeans_node2vec']
+    # methods = ['hdbscan_custom', 'kmeans_custom']
 
     for_df = {}
     for i in range(len(dfs)):
@@ -120,18 +115,18 @@ if __name__ == "__main__":
     parser.add_argument('--level', choices=choices, default='INFO', help=message)
     args = parser.parse_args()
 
-    hash = "b62de6d5-2bf3-4cc0-b8b4-254a34927063"
-    time = "2024-03-05 20:26:22"
+    hash = str(uuid.uuid4())
+    time = Time().datetime()
 
-    # for i in range(0, int(config["RUNNING"]["n"])):
-    #     folder_name = f"{time}_{i}_{hash[:8]}"
-    #     logger = MyLogger(__name__, folder_name, level=args.level, id=hash)
+    for i in range(0, int(config["RUNNING"]["n"])):
+        folder_name = f"{time}_{i}_{hash[:8]}"
+        logger = MyLogger(__name__, folder_name, level=args.level, id=hash)
         
-    #     local_config = config
-    #     local_config["KMEANS"] = config[f"KMEANS_{i}"]
-    #     local_config["FAKE_GRAPH"] = config[f"FAKE_GRAPH_{i}"]
-    #     main(local_config, logger, folder_name)
+        local_config = config
+        local_config["KMEANS"] = config[f"KMEANS_{i}"]
+        local_config["FAKE_GRAPH"] = config[f"FAKE_GRAPH_{i}"]
+        main(local_config, logger, folder_name)
 
-    folder_name = f"{time}_{hash[:8]}"
-    logger = MyLogger(__name__, folder_name, level=args.level, id=hash)
-    main(config, logger, folder_name)
+    # folder_name = f"{time}_{hash[:8]}"
+    # logger = MyLogger(__name__, folder_name, level=args.level, id=hash)
+    # main(config, logger, folder_name)

@@ -27,8 +27,7 @@ def clean_nodes(df):
     print(f"Previo al filtrado: {len(df)}")
     uniques = df['from_address']._append(df['to_address']).value_counts()
     unique_values = uniques[uniques == 1]
-    print(len(unique_values))
-    filtered_df = df[~(df['from_address'].isin(unique_values.index) & df['to_address'].isin(unique_values.index))]
+    filtered_df = df[~(df['from_address'].isin(unique_values.index) | df['to_address'].isin(unique_values.index))]
     print(f"Después del filtrado: {len(filtered_df)}")
     return filtered_df
 
@@ -48,13 +47,14 @@ def pipeline(files, logger, config):
     df = read_files(files)
     cleaned_df = clean_nodes(df)
     addresses_ids = create_ids(cleaned_df, logger)
+    cleaned_df['value'] = cleaned_df['value'].astype(float)
 
     model_v2_config = config["MODEL_V2"]
     model = ModelBuilder(addresses_ids, EuclideanLoss, Adam, logger, model_v2_config)
 
     generator = create_generator(cleaned_df, addresses_ids, logger, config)
     embeddings = model.compile_model().fit(generator).get_embeddings()
-    return embeddings
+    return embeddings, addresses_ids
 
 def pipeline_v2(df, logger, config):
     set_gpu(logger)
