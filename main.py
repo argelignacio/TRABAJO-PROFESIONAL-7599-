@@ -44,9 +44,9 @@ def calculate_precision(column, indexes, mapping, tmp_mapping, full_nodes, logge
 
     result = dict()
     
-    result_act = list(full_nodes.apply(lambda x: x[column] == x.real_cluster, axis=1).value_counts())
+    result_act = list(full_nodes.apply(lambda x: x[f"{column}_mapped"] == x.real_cluster, axis=1).value_counts())
     if len(result_act) == 1:
-        if full_nodes.apply(lambda x: x[column] == x.real_cluster, axis=1).value_counts().index[0]:
+        if full_nodes.apply(lambda x: x[f"{column}_mapped"] == x.real_cluster, axis=1).value_counts().index[0]:
             logger.info(f"Precision_{column}: 1")
             result[f"Precision_{column}"] = result.get(f"Precision_{column}", 1)
         else:
@@ -125,6 +125,7 @@ if __name__ == "__main__":
         local_config = config
         local_config["KMEANS"] = config[f"KMEANS_{i}"]
         local_config["FAKE_GRAPH"] = config[f"FAKE_GRAPH_{i}"]
+        local_config["GENERATOR_V2"] = config[f"GENERATOR_V2_{i}"]
         main(local_config, logger, folder_name)
 
     # folder_name = f"{time}_{hash[:8]}"

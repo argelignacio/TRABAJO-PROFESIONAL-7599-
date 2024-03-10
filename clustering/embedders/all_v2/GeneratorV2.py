@@ -28,7 +28,7 @@ class GeneratorTriplet(Sequence):
             .rename(columns={'block_timestamp': 'count_transactions', 'value': 'total_amount'})\
             .reset_index()
         
-        weigth = int(self.config["GENERATOR_V2"]["weigth"])
+        weigth = float(self.config["GENERATOR_V2"]["weigth"])
 
         # lo que intenta es darle un peso a aquellos que frecuentan transacciones
         normalized_count_transactions = (df['count_transactions'] - df['count_transactions'].mean()) / df['count_transactions'].std()

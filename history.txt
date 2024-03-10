@@ -1,0 +1,89 @@
+[FAKE_GRAPH_0]
+nodes_per_cluster = 15
+intern_probability = 0.55
+n_transactions = 10000
+
+[KMEANS_0]
+n_clusters = 6
+n_init = 150
+
+[FAKE_GRAPH_1]
+nodes_per_cluster = 40
+intern_probability = 0.55
+n_transactions = 10000
+
+[KMEANS_1]
+n_clusters = 3
+n_init = 150
+
+[FAKE_GRAPH_2]
+nodes_per_cluster = 40
+intern_probability = 0.35
+n_transactions = 12000
+
+[KMEANS_2]
+n_clusters = 3
+n_init = 150
+
+[FAKE_GRAPH_3]
+nodes_per_cluster = 50
+intern_probability = 0.85
+n_transactions = 40000
+
+[KMEANS_3]
+n_clusters = 10
+n_init = 150
+
+[FAKE_GRAPH_4]
+nodes_per_cluster = 30
+intern_probability = 0.15
+n_transactions = 30000
+
+[KMEANS_4]
+n_clusters = 10
+n_init = 150
+
+[FAKE_GRAPH_5]
+nodes_per_cluster = 30
+intern_probability = 0.15
+n_transactions = 30000
+
+[KMEANS_5]
+n_clusters = 6
+n_init = 150
+
+[FAKE_GRAPH_6]
+nodes_per_cluster = 10
+intern_probability = 0.55
+n_transactions = 4000
+
+[KMEANS_6]
+n_clusters = 4
+n_init = 150
+
+[FAKE_GRAPH_7]
+nodes_per_cluster = 10
+intern_probability = 0.55
+n_transactions = 4000
+
+[KMEANS_7]
+n_clusters = 4
+n_init = 150
+
+[FAKE_GRAPH_8]
+nodes_per_cluster = 10
+intern_probability = 0.55
+n_transactions = 4000
+
+[KMEANS_8]
+n_clusters = 4
+n_init = 150
+
+[FAKE_GRAPH_9]
+nodes_per_cluster = 10
+intern_probability = 0.55
+n_transactions = 4000
+
+[KMEANS_9]
+n_clusters = 4
+n_init = 150
