@@ -1,0 +1,28 @@
+\begin{thebibliography}{3}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Kour and Saabne(2014{\natexlab{a}})]{kour2014real}
+George Kour and Raid Saabne.
+\newblock Real-time segmentation of on-line handwritten arabic script.
+\newblock In \emph{Frontiers in Handwriting Recognition (ICFHR), 2014 14th
+  International Conference on}, pages 417--422. IEEE, 2014{\natexlab{a}}.
+
+\bibitem[Keshet et~al.(2016)Keshet, Maor, and Kour]{keshet2016prediction}
+Renato Keshet, Alina Maor, and George Kour.
+\newblock Prediction-based, prioritized market-share insight extraction.
+\newblock In \emph{Advanced Data Mining and Applications: 12th International
+  Conference, ADMA 2016, Gold Coast, QLD, Australia, December 12-15, 2016,
+  Proceedings 12}, pages 81--94. Springer, 2016.
+
+\bibitem[Kour and Saabne(2014{\natexlab{b}})]{kour2014fast}
+George Kour and Raid Saabne.
+\newblock Fast classification of handwritten on-line arabic characters.
+\newblock In \emph{Soft Computing and Pattern Recognition (SoCPaR), 2014 6th
+  International Conference of}, pages 312--318. IEEE, 2014{\natexlab{b}}.
+\newblock \doi{10.1109/SOCPAR.2014.7008025}.
+
+\end{thebibliography}
