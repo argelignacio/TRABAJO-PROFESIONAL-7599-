@@ -25,7 +25,7 @@ def clean_nodes(df):
     df = df[~df.from_address.isna()]
     df = df[df["from_address"] != df["to_address"]]
     print(f"Previo al filtrado: {len(df)}")
-    uniques = df['from_address']._append(df['to_address']).value_counts()
+    uniques = df['from_address'].append(df['to_address']).value_counts()
     unique_values = uniques[uniques == 1]
     filtered_df = df[~(df['from_address'].isin(unique_values.index) | df['to_address'].isin(unique_values.index))]
     print(f"Después del filtrado: {len(filtered_df)}")

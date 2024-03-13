@@ -11,6 +11,7 @@ from utils.time import Time
 from utils.file_management import FileManagement
 import pandas as pd
 import numpy as np
+from clustering.louvain.louvain import Louvain
 
 def run_fake_graph(logger, file_management):
     n_clusters = int(config["KMEANS"]["n_clusters"])
@@ -70,7 +71,7 @@ def main(config, logger, folder_name):
 
     executor = Executor(logger, df, config, file_management)
     executor.run_all()
-
+    
     kmeans_processor = Kmeans(logger, config, file_management)
     nodes_labels_custom_kmeans = kmeans_processor.run("Custom Embedder")
     nodes_labels_node2vec_kmeans = kmeans_processor.run("Node2Vec")
@@ -79,13 +80,14 @@ def main(config, logger, folder_name):
     nodes_labels_custom_hdbscan = hdbscan_processor.run("Custom Embedder")
     nodes_labels_node2vec_hdbscan = hdbscan_processor.run("Node2Vec")
 
+    louvain_processor = Louvain(logger, config, file_management)
+    df_labels_louvain = louvain_processor.run(df)
+
     clusters = dict()
     df.apply(lambda x: set_clusters(x, clusters), axis=1)
     
-    dfs = [nodes_labels_custom_hdbscan, nodes_labels_node2vec_hdbscan, nodes_labels_custom_kmeans, nodes_labels_node2vec_kmeans]
-    # dfs = [nodes_labels_custom_hdbscan, nodes_labels_custom_kmeans]
-    methods = ['hdbscan_custom', 'hdbscan_node2vec', 'kmeans_custom', 'kmeans_node2vec']
-    # methods = ['hdbscan_custom', 'kmeans_custom']
+    dfs = [nodes_labels_custom_hdbscan, nodes_labels_node2vec_hdbscan, nodes_labels_custom_kmeans, nodes_labels_node2vec_kmeans, df_labels_louvain]
+    methods = ['hdbscan_custom', 'hdbscan_node2vec', 'kmeans_custom', 'kmeans_node2vec', 'louvain']
 
     for_df = {}
     for i in range(len(dfs)):
