@@ -40,9 +40,8 @@ class GeneratorFakeGraph:
                     'cluster_to': id_2[1], 
                     'block_timestamp': 1, 
                     'value': (random.random()*1000)
-                    }
-                                        
-                if random.random() < probability_intern:
+                    }          
+                elif random.random() < probability_intern:
                     cluster_aux = int(random.random() * (n_clusters))
                     id_1 = clusters[cluster_aux][int(random.random() * (n_nodes_per_cluster))]
                     id_2 = clusters[cluster_aux][int(random.random() * (n_nodes_per_cluster))]
