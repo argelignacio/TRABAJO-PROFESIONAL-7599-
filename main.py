@@ -44,7 +44,7 @@ def calculate_precision(method, indexes, mapping, tmp_mapping, full_nodes, logge
     
     result_act = full_nodes.apply(lambda x: x[f"{method}_mapped"] == x.real_cluster, axis=1).value_counts()
     if len(result_act) == 1:
-        if full_nodes.apply(lambda x: x[f"{method}_mapped"] == x.real_cluster, axis=1).value_counts().index[0]:
+        if result_act.index[0]:
             logger.info(f"Precision_{method}: 1")
             result[f"Precision_{method}"] = result.get(f"Precision_{method}", 1)
         else:
