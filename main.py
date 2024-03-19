@@ -33,30 +33,27 @@ def mode_without_err(x):
         return mode[0]
     return mode
 
-def calculate_precision(column, indexes, mapping, tmp_mapping, full_nodes, logger, file_management):
+def calculate_precision(method, indexes, mapping, tmp_mapping, full_nodes, logger, file_management):
     for i in indexes:
-        mapping[column] = mapping.get(column, {})
-        if isinstance(tmp_mapping.loc[i], np.ndarray):
-            mapping[column][tmp_mapping.loc[i][0]] = i
-        else:
-            mapping[column][tmp_mapping.loc[i]] = i
+        mapping[method] = mapping.get(method, {})
+        mapping[method][tmp_mapping.loc[i]] = i
     
-    full_nodes[f"{column}_mapped"] = full_nodes.apply(lambda x: mapping[column].get(int(x[column])), axis=1)
+    full_nodes[f"{method}_mapped"] = full_nodes.apply(lambda x: mapping[method].get(int(x[method])), axis=1)
 
     result = dict()
     
-    result_act = list(full_nodes.apply(lambda x: x[f"{column}_mapped"] == x.real_cluster, axis=1).value_counts())
+    result_act = full_nodes.apply(lambda x: x[f"{method}_mapped"] == x.real_cluster, axis=1).value_counts()
     if len(result_act) == 1:
-        if full_nodes.apply(lambda x: x[f"{column}_mapped"] == x.real_cluster, axis=1).value_counts().index[0]:
-            logger.info(f"Precision_{column}: 1")
-            result[f"Precision_{column}"] = result.get(f"Precision_{column}", 1)
+        if full_nodes.apply(lambda x: x[f"{method}_mapped"] == x.real_cluster, axis=1).value_counts().index[0]:
+            logger.info(f"Precision_{method}: 1")
+            result[f"Precision_{method}"] = result.get(f"Precision_{method}", 1)
         else:
-            logger.info(f"Precision_{column}: 0")
-            result[f"Precision_{column}"] = result.get(f"Precision_{column}", 0)
+            logger.info(f"Precision_{method}: 0")
+            result[f"Precision_{method}"] = result.get(f"Precision_{method}", 0)
     else:
-        precision = result.get(f"Precision_{column}", (int(result_act[1]) / (int(result_act[0])+int(result_act[1]))))
-        logger.info(f"Precision_{column}: {precision}")
-        result[f"Precision_{column}"] = precision
+        precision = result.get(f"Precision_{method}", int(result_act[True]) / (int(result_act[False])+int(result_act[True])))
+        logger.info(f"Precision_{method}: {precision}")
+        result[f"Precision_{method}"] = precision
 
     for_df = {}
     for key in result.keys():
