@@ -15,7 +15,7 @@ class GeneratorFakeGraph:
 
     
     def generate_fake_graph_df(logger, n_clusters, n_nodes_per_cluster, probability_intern=0.65, n_transactions=300, floating_nodes_proportion=0.3):
-            logger.info(f"Generating Fake Graph with: n_clusters: {str(n_clusters)} n_nodes_per_cluster: {str(n_nodes_per_cluster)} probability_intern: {str(probability_intern)} n_transactions: {str(n_transactions)}")
+            logger.info(f"Generating Fake Graph with: n_clusters: {str(n_clusters)} n_nodes_per_cluster: {str(n_nodes_per_cluster)} probability_intern: {str(probability_intern)} n_transactions: {str(n_transactions)} floating_nodes_proportion: {str(floating_nodes_proportion)}")
             clusters = [[(str(uuid.uuid4()), cluster_id) for _ in range(n_nodes_per_cluster)] for cluster_id in range(n_clusters)]
 
             if floating_nodes_proportion > 0:
