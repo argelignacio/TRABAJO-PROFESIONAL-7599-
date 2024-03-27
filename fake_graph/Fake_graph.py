@@ -14,7 +14,7 @@ class GeneratorFakeGraph:
         return G
 
     
-    def generate_fake_graph_df(logger, n_clusters, n_nodes_per_cluster, probability_intern=0.65, n_transactions=300, floating_nodes_proportion=0.3):
+    def generate_fake_graph_df(logger, n_clusters, n_nodes_per_cluster, probability_intern=0.65, n_transactions=300, floating_nodes_proportion=0.3, intern_ratio=1):
             logger.info(f"Generating Fake Graph with: n_clusters: {str(n_clusters)} n_nodes_per_cluster: {str(n_nodes_per_cluster)} probability_intern: {str(probability_intern)} n_transactions: {str(n_transactions)} floating_nodes_proportion: {str(floating_nodes_proportion)}")
             clusters = [[(str(uuid.uuid4()), cluster_id) for _ in range(n_nodes_per_cluster)] for cluster_id in range(n_clusters)]
 
@@ -26,43 +26,43 @@ class GeneratorFakeGraph:
             data = []
             for _ in range(n_transactions):
                 if random.random() < floating_nodes_proportion:
-                    cluster_aux = int(random.random() * (n_clusters+1)) - 1
+                    cluster_aux = int(random.random() * (n_clusters + 1)) - 1
                     if random.random() < 0.5:
                         id_1 = clusters[cluster_aux][int(random.random() * (n_nodes_per_cluster))]
-                        id_2 = clusters[-1][int(random.random() * (n_nodes_per_cluster))]
+                        id_2 = clusters[-1][int(random.random() * (floating_count))]
                     else:
-                        id_1 = clusters[-1][int(random.random() * (n_nodes_per_cluster))]
+                        id_1 = clusters[-1][int(random.random() * (floating_count))]
                         id_2 = clusters[cluster_aux][int(random.random() * (n_nodes_per_cluster))]
                     new_row = {
-                    'from_address': id_1[0], 
-                    'to_address': id_2[0], 
-                    'cluster_from': id_1[1], 
-                    'cluster_to': id_2[1], 
-                    'block_timestamp': 1, 
-                    'value': (random.random()*1000)
+                        'from_address': id_1[0], 
+                        'to_address': id_2[0], 
+                        'cluster_from': id_1[1], 
+                        'cluster_to': id_2[1], 
+                        'block_timestamp': 1, 
+                        'value': (random.random() * 1000*  intern_ratio)
                     }          
                 elif random.random() < probability_intern:
                     cluster_aux = int(random.random() * (n_clusters))
                     id_1 = clusters[cluster_aux][int(random.random() * (n_nodes_per_cluster))]
                     id_2 = clusters[cluster_aux][int(random.random() * (n_nodes_per_cluster))]
                     new_row = {
-                    'from_address': id_1[0], 
-                    'to_address': id_2[0], 
-                    'cluster_from': id_1[1], 
-                    'cluster_to': id_2[1], 
-                    'block_timestamp': 1, 
-                    'value': (random.random()*1000)
+                        'from_address': id_1[0], 
+                        'to_address': id_2[0], 
+                        'cluster_from': id_1[1], 
+                        'cluster_to': id_2[1], 
+                        'block_timestamp': 1, 
+                        'value': (random.random() * 1000)
                     }
                 else:
                     id_1 = clusters[int(random.random() * (n_clusters))][int(random.random() * (n_nodes_per_cluster))]
                     id_2 = clusters[int(random.random() * (n_clusters))][int(random.random() * (n_nodes_per_cluster))]
                     new_row = {
-                    'from_address': id_1[0], 
-                    'to_address': id_2[0], 
-                    'cluster_from': id_1[1], 
-                    'cluster_to': id_2[1], 
-                    'block_timestamp': 1, 
-                    'value': (random.random()*1000)
+                        'from_address': id_1[0], 
+                        'to_address': id_2[0], 
+                        'cluster_from': id_1[1], 
+                        'cluster_to': id_2[1], 
+                        'block_timestamp': 1, 
+                        'value': (random.random() * 1000 * intern_ratio)
                     }
                 
 

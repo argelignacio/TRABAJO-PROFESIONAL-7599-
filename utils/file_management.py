@@ -1,6 +1,7 @@
 import os
 import numpy as np
 import pickle as pkl
+import pandas as pd
 
 class FileManagement:
     def __init__(self, folder_path):
@@ -32,3 +33,6 @@ class FileManagement:
         
     def load_npy(self, file_name):
         return np.load(os.path.join(self.folder_path, file_name), allow_pickle=True)
+    
+    def load_df(self, file_name):
+        return pd.read_csv(os.path.join(self.folder_path, file_name))

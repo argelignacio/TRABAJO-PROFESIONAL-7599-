@@ -21,7 +21,7 @@ class Executor:
         self.file_management.save_pkl("ids.pkl", ids)
         self.logger.debug(f"Saved file ids.pkl")
 
-    def _node2vec_embedding(self, dimensions=128, walk_length=16, num_walks=100, workers=2, window=10, min_count=1, batch_words=4):
+    def _node2vec_embedding(self, dimensions=128, walk_length=200, num_walks=100, workers=2, window=10, min_count=1, batch_words=4):
         G = nx.from_pandas_edgelist(self.df, 'from_address', 'to_address')
         node2vec = Node2Vec(G, dimensions=dimensions, walk_length=walk_length, num_walks=num_walks, workers=workers)
         self.logger.info("Node2Vec model created with dimensions: " + str(dimensions) + " walk_length: " + str(walk_length) + " num_walks: " + str(num_walks) + " workers: " + str(workers))

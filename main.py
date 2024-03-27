@@ -19,8 +19,9 @@ def run_fake_graph(logger, file_management):
     intern_probability = float(config["FAKE_GRAPH"]["intern_probability"])
     n_transactions = int(config["FAKE_GRAPH"]["n_transactions"])
     floating_nodes_proportion = float(config["FAKE_GRAPH"]["floating_nodes_proportion"])
+    intern_ratio = float(config["FAKE_GRAPH"]["intern_ratio"])
 
-    df = GeneratorFakeGraph.generate_fake_graph_df(logger, n_clusters, nodes_per_cluster, intern_probability, n_transactions,floating_nodes_proportion)
+    df = GeneratorFakeGraph.generate_fake_graph_df(logger, n_clusters, nodes_per_cluster, intern_probability, n_transactions,floating_nodes_proportion, intern_ratio)
     file_management.save_df("fake_graph.csv", df)
     return df
 
@@ -66,7 +67,6 @@ def main(config, logger, folder_name):
     file_management = FileManagement(os.path.join(os.getcwd(), "results", folder_name))
 
     df = run_fake_graph(logger, file_management)
-
     executor = Executor(logger, df, config, file_management)
     executor.run_all()
     

@@ -5,6 +5,8 @@ import umap
 import os
 import time
 import sys
+import matplotlib.colors as colors
+import numpy as np
 sys.path.insert(0, os.path.abspath("../.."))
 
 class Hdbscan():
@@ -29,7 +31,14 @@ class Hdbscan():
 
     def plot_hdbscan(self, embedding, nodes_labels, method):
         plt.figure(figsize=(10, 6))
-        plt.scatter(embedding.embedding_[:, 0], embedding.embedding_[:, 1], alpha=0.4, c=nodes_labels.hdbscan, cmap='viridis')
+
+        cmap_colors = ['gray'] + [colors.to_hex(plt.cm.viridis(i)) for i in range(len(nodes_labels.hdbscan) - 1)]
+
+        cmap = colors.ListedColormap(cmap_colors)
+
+        plt.scatter(embedding.embedding_[:, 0], embedding.embedding_[:, 1],
+                    alpha=0.4, c=nodes_labels.hdbscan, cmap=cmap)
+
         plt.gca().set_aspect('equal', 'datalim')
         plt.title(f'HDBSCAN: {method}')
         plt.savefig(self.file_management.join_path(f'hdbscan_{method}.png'))
