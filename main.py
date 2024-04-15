@@ -20,8 +20,18 @@ def run_fake_graph(logger, file_management):
     n_transactions = int(config["FAKE_GRAPH"]["n_transactions"])
     floating_nodes_proportion = float(config["FAKE_GRAPH"]["floating_nodes_proportion"])
     intern_ratio = float(config["FAKE_GRAPH"]["intern_ratio"])
+    n_nodes_per_cluster_deviation = float(config["FAKE_GRAPH"].get("n_nodes_per_cluster_deviation", 0))
 
-    df = GeneratorFakeGraph.generate_fake_graph_df(logger, n_clusters, nodes_per_cluster, intern_probability, n_transactions,floating_nodes_proportion, intern_ratio)
+    df = GeneratorFakeGraph.generate_fake_graph_df(
+        logger,
+        n_clusters,
+        nodes_per_cluster,
+        intern_probability,
+        n_transactions,
+        floating_nodes_proportion,
+        intern_ratio,
+        n_nodes_per_cluster_deviation
+    )
     file_management.save_df("fake_graph.csv", df)
     return df
 

@@ -46,7 +46,7 @@ class Hdbscan():
 
     def hdbscan_fit(self, embedding_matrix, ids, method):
         start_fit = time.time()
-        hdbs_model = hdbscan.HDBSCAN().fit(embedding_matrix)
+        hdbs_model = hdbscan.HDBSCAN(min_samples=1, cluster_selection_epsilon=0.01).fit(embedding_matrix)
         end_fit = time.time()
         self.logger.info(f"HDBSCAN over embedding from {str(method)} fit in: {(end_fit - start_fit)/60} minutes")
         hbds_scan_labels = hdbs_model.labels_
