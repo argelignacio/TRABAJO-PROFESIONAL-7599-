@@ -12,6 +12,8 @@ from utils.file_management import FileManagement
 import pandas as pd
 import numpy as np
 
+
+
 def run_fake_graph(logger, file_management):
     n_clusters = int(config["KMEANS"]["n_clusters"])
     nodes_per_cluster = int(config["FAKE_GRAPH"]["nodes_per_cluster"])
