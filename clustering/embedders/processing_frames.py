@@ -6,19 +6,16 @@ from clustering.embedders.all_v1.Loss import EuclideanLoss
 from clustering.embedders.all_v2.ModelV2 import ModelBuilder
 import os
 from datetime import datetime, timedelta
-from logger.logger import MyLogger
 
-logger = MyLogger(__name__)
-
-def set_gpu():
+def set_gpu(logger):
     gpus = tf.config.list_physical_devices('GPU')
     if gpus:
         try:
             tf.config.set_visible_devices(gpus[0], 'GPU')
             logical_gpus = tf.config.list_logical_devices('GPU')
-            logger.info(f"GPU set: {logical_gpus}")
+            logger.debug(f"GPU set: {logical_gpus}")
         except RuntimeError as e:
-            print(e)
+            logger.error(e)
 
 def read_files(files):
     return pd.concat((pd.read_csv(f) for f in files), ignore_index=True)
@@ -26,44 +23,49 @@ def read_files(files):
 def clean_nodes(df):
     df = df[~df.to_address.isna()]
     df = df[~df.from_address.isna()]
-    return df[df["from_address"] != df["to_address"]]
+    df = df[df["from_address"] != df["to_address"]]
+    print(f"Previo al filtrado: {len(df)}")
+    uniques = df['from_address']._append(df['to_address']).value_counts()
+    unique_values = uniques[uniques == 1]
+    filtered_df = df[~(df['from_address'].isin(unique_values.index) | df['to_address'].isin(unique_values.index))]
+    print(f"Después del filtrado: {len(filtered_df)}")
+    return filtered_df
 
-def create_ids(df):
+def create_ids(df, logger):
     ids = {}
     for i, id in enumerate(set(df['from_address']).union(set(df['to_address']))):
         ids[id] = i
-    logger.info("Ids created")
+    logger.debug("Ids created")
     return ids
 
-def create_generator(df, ids):
-    generator = GeneratorTriplet(df, ids, 64)
-    logger.info("Generator created")
+def create_generator(df, ids, logger, config):
+    generator = GeneratorTriplet(df, ids, config, logger)
+    logger.debug("Generator created")
     return generator
 
-def train_model(model, generator):
-    callback = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=5, restore_best_weights=True)
-    model.fit(generator, epochs=1000, callbacks=[callback])
-
-def pipeline(files):
+def pipeline(files, logger, config):
     df = read_files(files)
     cleaned_df = clean_nodes(df)
-    addresses_ids = create_ids(cleaned_df)
+    addresses_ids = create_ids(cleaned_df, logger)
+    cleaned_df['value'] = cleaned_df['value'].astype(float)
 
-    model = ModelBuilder(addresses_ids, EuclideanLoss, Adam)
+    model_v2_config = config["MODEL_V2"]
+    model = ModelBuilder(addresses_ids, EuclideanLoss, Adam, logger, model_v2_config)
 
-    generator = create_generator(cleaned_df, addresses_ids)
+    generator = create_generator(cleaned_df, addresses_ids, logger, config)
     embeddings = model.compile_model().fit(generator).get_embeddings()
-    return embeddings
+    return embeddings, addresses_ids
 
-def pipeline_v2(df):
-    set_gpu()
+def pipeline_v2(df, logger, config):
+    set_gpu(logger)
     cleaned_df = clean_nodes(df)
-    addresses_ids = create_ids(cleaned_df)
+    addresses_ids = create_ids(cleaned_df, logger)
 
-    logger.info("Creating model")
-    model = ModelBuilder(addresses_ids, EuclideanLoss, Adam)
+    logger.debug("Creating model")
+    model_v2_config = config["MODEL_V2"]
+    model = ModelBuilder(addresses_ids, EuclideanLoss, Adam, logger, model_v2_config)
     
-    generator = create_generator(cleaned_df, addresses_ids)
+    generator = create_generator(cleaned_df, addresses_ids, logger, config)
     embeddings = model.compile_model().fit(generator).get_embeddings()
     return embeddings, addresses_ids
 
@@ -119,8 +121,8 @@ def generate_dates(src, months):
 
                 array_datos.append(archivos_ventana_15_dias)
 
-def main():
-    set_gpu()
+def main(logger):
+    set_gpu(logger)
     months = ["July"]
     src = "../../../datos"
     generated_files = generate_dates(src, months)

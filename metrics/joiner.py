@@ -27,10 +27,10 @@ for mes in meses:
                             ruta_archivo = os.path.join(ruta_directorio_act, nombre_archivo)
                             with open(ruta_archivo, 'rb') as file:
                                 datos = pickle.load(file)
-                                logger.info(f"Datos en '{ruta_archivo}'")
+                                logger.debug(f"Datos en '{ruta_archivo}'")
                             datos['date'] = fecha_extraida
                             df_temporal = pd.DataFrame.from_dict(datos, orient='index').T
                             df_final = pd.concat([df_final, df_temporal], ignore_index=True)
 
 df_final.to_csv("registro_metricas_ventanas.csv", index=False)
-logger.info("Guardado en registro_metricas_ventanas.csv")
+logger.debug("Guardado en registro_metricas_ventanas.csv")

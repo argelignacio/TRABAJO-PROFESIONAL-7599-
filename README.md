@@ -1,5 +1,18 @@
 # TRABAJO-PROFESIONAL-7599-
 
+# ejecuciones:
+
+### Ejecución 1: `poetry run python3 main.py --level INFO`
+
+Crea un grafo fake para crear embeddings de dos formas diferentes. 
+
+1. El primer caso es con una red neuronal (...desarrollar...)
+2. El segundo caso es haciendo uso de Node2Vec
+
+Luego de haber construido los embeddings lo que hacemos es aplicar kmeans y hdbscan sobre estos para comparar la performance de nuestro modelo con respecto a Node2Vec, visualizando además con UMAP. Finalmente con un ID de ejecución logueamos los resultados finales y con qué parámetro hicimos cada paso.
+
+# Módulos
+
 ## Metrics_maker
 
 Este script se utiliza para extraer metricas de un grafo definido por un csv.

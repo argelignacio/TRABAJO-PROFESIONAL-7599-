@@ -1,0 +1,12 @@
+Codigo/calidad del tp:
+1. refactor de clases (tener en cuenta hacer uso de inyección de dependencias, por ejemplo con el logger)
+    1.1. os.path por ejemplo
+2. intentar plotear en mas dimensiones
+3. agregar linter
+
+datos:
+1. Mejorar el optimizador.
+    1.1. mejora en la performance de entrenamiento.
+2. calcular un weight dinamicamente
+    2.1. buscamos separar diferentes comunidades entre si y juntar los nodos que pertenezcan a una misma comunidad tanto comos ea posible.
+3. testear hdbscan con data similar a la realidad agregando nodos que sean ruido.
