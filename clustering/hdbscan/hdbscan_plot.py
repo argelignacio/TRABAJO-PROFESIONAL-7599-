@@ -5,6 +5,8 @@ import umap
 import os
 import time
 import sys
+import matplotlib.colors as colors
+import numpy as np
 sys.path.insert(0, os.path.abspath("../.."))
 
 class Hdbscan():
@@ -29,7 +31,14 @@ class Hdbscan():
 
     def plot_hdbscan(self, embedding, nodes_labels, method):
         plt.figure(figsize=(10, 6))
-        plt.scatter(embedding.embedding_[:, 0], embedding.embedding_[:, 1], alpha=0.4, c=nodes_labels.hdbscan, cmap='viridis')
+
+        cmap_colors = ['gray'] + [colors.to_hex(plt.cm.viridis(i)) for i in range(len(nodes_labels.hdbscan) - 1)]
+
+        cmap = colors.ListedColormap(cmap_colors)
+
+        plt.scatter(embedding.embedding_[:, 0], embedding.embedding_[:, 1],
+                    alpha=0.4, c=nodes_labels.hdbscan, cmap=cmap)
+
         plt.gca().set_aspect('equal', 'datalim')
         plt.title(f'HDBSCAN: {method}')
         plt.savefig(self.file_management.join_path(f'hdbscan_{method}.png'))
@@ -37,7 +46,7 @@ class Hdbscan():
 
     def hdbscan_fit(self, embedding_matrix, ids, method):
         start_fit = time.time()
-        hdbs_model = hdbscan.HDBSCAN().fit(embedding_matrix)
+        hdbs_model = hdbscan.HDBSCAN(min_samples=1, cluster_selection_epsilon=0.01).fit(embedding_matrix)
         end_fit = time.time()
         self.logger.info(f"HDBSCAN over embedding from {str(method)} fit in: {(end_fit - start_fit)/60} minutes")
         hbds_scan_labels = hdbs_model.labels_

@@ -11,6 +11,7 @@ from utils.time import Time
 from utils.file_management import FileManagement
 import pandas as pd
 import numpy as np
+from clustering.louvain.louvain import Louvain
 
 def run_fake_graph(logger, file_management):
     n_clusters = int(config["KMEANS"]["n_clusters"])
@@ -18,8 +19,19 @@ def run_fake_graph(logger, file_management):
     intern_probability = float(config["FAKE_GRAPH"]["intern_probability"])
     n_transactions = int(config["FAKE_GRAPH"]["n_transactions"])
     floating_nodes_proportion = float(config["FAKE_GRAPH"]["floating_nodes_proportion"])
+    intern_ratio = float(config["FAKE_GRAPH"]["intern_ratio"])
+    n_nodes_per_cluster_deviation = float(config["FAKE_GRAPH"].get("n_nodes_per_cluster_deviation", 0))
 
-    df = GeneratorFakeGraph.generate_fake_graph_df(logger, n_clusters, nodes_per_cluster, intern_probability, n_transactions,floating_nodes_proportion)
+    df = GeneratorFakeGraph.generate_fake_graph_df(
+        logger,
+        n_clusters,
+        nodes_per_cluster,
+        intern_probability,
+        n_transactions,
+        floating_nodes_proportion,
+        intern_ratio,
+        n_nodes_per_cluster_deviation
+    )
     file_management.save_df("fake_graph.csv", df)
     return df
 
@@ -33,30 +45,27 @@ def mode_without_err(x):
         return mode[0]
     return mode
 
-def calculate_precision(column, indexes, mapping, tmp_mapping, full_nodes, logger, file_management):
+def calculate_precision(method, indexes, mapping, tmp_mapping, full_nodes, logger, file_management):
     for i in indexes:
-        mapping[column] = mapping.get(column, {})
-        if isinstance(tmp_mapping.loc[i], np.ndarray):
-            mapping[column][tmp_mapping.loc[i][0]] = i
-        else:
-            mapping[column][tmp_mapping.loc[i]] = i
+        mapping[method] = mapping.get(method, {})
+        mapping[method][tmp_mapping.loc[i]] = i
     
-    full_nodes[f"{column}_mapped"] = full_nodes.apply(lambda x: mapping[column].get(int(x[column])), axis=1)
+    full_nodes[f"{method}_mapped"] = full_nodes.apply(lambda x: mapping[method].get(int(x[method])), axis=1)
 
     result = dict()
     
-    result_act = list(full_nodes.apply(lambda x: x[f"{column}_mapped"] == x.real_cluster, axis=1).value_counts())
+    result_act = full_nodes.apply(lambda x: x[f"{method}_mapped"] == x.real_cluster, axis=1).value_counts()
     if len(result_act) == 1:
-        if full_nodes.apply(lambda x: x[f"{column}_mapped"] == x.real_cluster, axis=1).value_counts().index[0]:
-            logger.info(f"Precision_{column}: 1")
-            result[f"Precision_{column}"] = result.get(f"Precision_{column}", 1)
+        if result_act.index[0]:
+            logger.info(f"Precision_{method}: 1")
+            result[f"Precision_{method}"] = result.get(f"Precision_{method}", 1)
         else:
-            logger.info(f"Precision_{column}: 0")
-            result[f"Precision_{column}"] = result.get(f"Precision_{column}", 0)
+            logger.info(f"Precision_{method}: 0")
+            result[f"Precision_{method}"] = result.get(f"Precision_{method}", 0)
     else:
-        precision = result.get(f"Precision_{column}", (int(result_act[1]) / (int(result_act[0])+int(result_act[1]))))
-        logger.info(f"Precision_{column}: {precision}")
-        result[f"Precision_{column}"] = precision
+        precision = result.get(f"Precision_{method}", int(result_act[True]) / (int(result_act[False])+int(result_act[True])))
+        logger.info(f"Precision_{method}: {precision}")
+        result[f"Precision_{method}"] = precision
 
     for_df = {}
     for key in result.keys():
@@ -68,10 +77,9 @@ def main(config, logger, folder_name):
     file_management = FileManagement(os.path.join(os.getcwd(), "results", folder_name))
 
     df = run_fake_graph(logger, file_management)
-
     executor = Executor(logger, df, config, file_management)
     executor.run_all()
-
+    
     kmeans_processor = Kmeans(logger, config, file_management)
     nodes_labels_custom_kmeans = kmeans_processor.run("Custom Embedder")
     nodes_labels_node2vec_kmeans = kmeans_processor.run("Node2Vec")
@@ -80,13 +88,14 @@ def main(config, logger, folder_name):
     nodes_labels_custom_hdbscan = hdbscan_processor.run("Custom Embedder")
     nodes_labels_node2vec_hdbscan = hdbscan_processor.run("Node2Vec")
 
+    louvain_processor = Louvain(logger, config, file_management)
+    df_labels_louvain = louvain_processor.run(df)
+
     clusters = dict()
     df.apply(lambda x: set_clusters(x, clusters), axis=1)
     
-    dfs = [nodes_labels_custom_hdbscan, nodes_labels_node2vec_hdbscan, nodes_labels_custom_kmeans, nodes_labels_node2vec_kmeans]
-    # dfs = [nodes_labels_custom_hdbscan, nodes_labels_custom_kmeans]
-    methods = ['hdbscan_custom', 'hdbscan_node2vec', 'kmeans_custom', 'kmeans_node2vec']
-    # methods = ['hdbscan_custom', 'kmeans_custom']
+    dfs = [nodes_labels_custom_hdbscan, nodes_labels_node2vec_hdbscan, nodes_labels_custom_kmeans, nodes_labels_node2vec_kmeans, df_labels_louvain]
+    methods = ['hdbscan_custom', 'hdbscan_node2vec', 'kmeans_custom', 'kmeans_node2vec', 'louvain']
 
     for_df = {}
     for i in range(len(dfs)):
