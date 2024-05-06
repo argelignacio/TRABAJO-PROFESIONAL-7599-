@@ -137,7 +137,3 @@ if __name__ == "__main__":
         local_config["FAKE_GRAPH"] = config[f"FAKE_GRAPH_{i}"]
         local_config["GENERATOR_V2"] = config[f"GENERATOR_V2_{i}"]
         main(local_config, logger, folder_name)
-
-    # folder_name = f"{time}_{hash[:8]}"
-    # logger = MyLogger(__name__, folder_name, level=args.level, id=hash)
-    # main(config, logger, folder_name)

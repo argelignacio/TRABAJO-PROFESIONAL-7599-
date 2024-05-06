@@ -67,7 +67,6 @@ def pipeline_v2(df, logger, config):
     embeddings = model.compile_model().fit(generator).get_embeddings()
     return embeddings, addresses_ids
 
-
 dias_por_mes = {"June": 30, "July": 31}
 
 def obtener_archivos(ruta_directorio):

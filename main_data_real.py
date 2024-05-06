@@ -1,38 +1,14 @@
 import argparse
-from fake_graph.Fake_graph import GeneratorFakeGraph
 from clustering.hdbscan.hdbscan_plot import Hdbscan
 from clustering.kmeans.kmeans_plot import Kmeans
 from logger.logger import MyLogger
-from clustering.embedders.processing_frames import pipeline
+from clustering.embedders.processing_frames import pipeline_v2
 import configparser
 import uuid
 import os
 from utils.time import Time
 from utils.file_management import FileManagement
-import pandas as pd
 import numpy as np
-
-
-
-def run_fake_graph(logger, file_management):
-    n_clusters = int(config["KMEANS"]["n_clusters"])
-    nodes_per_cluster = int(config["FAKE_GRAPH"]["nodes_per_cluster"])
-    intern_probability = float(config["FAKE_GRAPH"]["intern_probability"])
-    n_transactions = int(config["FAKE_GRAPH"]["n_transactions"])
-
-    df = GeneratorFakeGraph.generate_fake_graph_df(logger, n_clusters, nodes_per_cluster, intern_probability, n_transactions)
-    file_management.save_df("fake_graph.csv", df)
-    return df
-
-def set_clusters(row, clusters):
-    clusters[row.from_address] = row.cluster_from
-    clusters[row.to_address] = row.cluster_to
-
-def mode_without_err(x):
-    mode = pd.Series.mode(x)
-    if len(mode) > 1:
-        return mode[0]
-    return mode
 
 def calculate_precision(column, indexes, mapping, tmp_mapping, full_nodes, logger, file_management):
     for i in indexes:
@@ -68,16 +44,17 @@ def calculate_precision(column, indexes, mapping, tmp_mapping, full_nodes, logge
 def main(config, logger, folder_name):
     file_management = FileManagement(os.path.join(os.getcwd(), "results", folder_name))
     
-    # files = ["../datos/2023/July/2023-07-02.csv"]
+    files = ["../datos/2023/July/2023-07-02.csv"]
 
-    # embedding_matrix, ids = pipeline(files, logger, config)
-    # file_management.save_npy("embedding_matrix.npy", embedding_matrix[0])
-    # logger.debug(f"Saved file embedding_matrix.npy")
-    # file_management.save_pkl("ids.pkl", ids)
-    # logger.debug(f"Saved file ids.pkl")
+    embedding_matrix, ids = pipeline_v2(files, logger, config)
+    file_management.save_npy("embedding_matrix.npy", embedding_matrix[0])
+    logger.debug(f"Saved file embedding_matrix.npy")
+    file_management.save_pkl("ids.pkl", ids)
+    logger.debug(f"Saved file ids.pkl")
 
     kmeans_processor = Kmeans(logger, config, file_management)
     kmeans_processor.run("Custom Embedder")
+
     hdbscan_processor = Hdbscan(logger, config, file_management)
     hdbscan_processor.run("Custom Embedder")
 
@@ -92,11 +69,8 @@ if __name__ == "__main__":
     parser.add_argument('--level', choices=choices, default='INFO', help=message)
     args = parser.parse_args()
 
-    # hash = str(uuid.uuid4())
-    # time = Time().datetime()
-
-    hash = "2e78502a-5ebf-4768-9cf3-ee719df28471"
-    time = "2024-03-09 17:54:52"
+    hash = str(uuid.uuid4())
+    time = Time().datetime()
 
     folder_name = f"{time}_{hash[:8]}"
     logger = MyLogger(__name__, folder_name, level=args.level, id=hash)
