@@ -1,7 +1,7 @@
 import tensorflow as tf
 
 class EuclideanLoss(tf.keras.losses.Loss):
-    def __init__(self, margin=0.2, **kwargs):
+    def __init__(self, margin=1, **kwargs):
         super().__init__(**kwargs)
         self.margin = margin
 
