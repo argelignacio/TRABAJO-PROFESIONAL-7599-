@@ -30,7 +30,7 @@ class GeneratorTriplet(Sequence):
         
         df_temp = df.groupby('from_address').agg({'count_transactions': 'sum', 'total_amount': 'sum' })
 
-        df['transaction_importance_pair'] = df['count_transactions'] / df['from_address'].map(df_temp['count_transactions'])
+        df['transaction_importance_pair'] = (df['count_transactions'] - df['count_transactions'].mean()) / df['count_transactions'].std()
         df['amount_importance_pair'] = df['total_amount'] / df['from_address'].map(df_temp['total_amount'])
 
         weigth = float(self.config["GENERATOR_V2"]["weigth"])
