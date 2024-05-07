@@ -1,6 +1,5 @@
 import argparse
 from clustering.hdbscan.hdbscan_plot import Hdbscan
-from clustering.kmeans.kmeans_plot import Kmeans
 from logger.logger import MyLogger
 from clustering.embedders.processing_frames import ProcessingFrames
 import configparser
@@ -24,9 +23,6 @@ def main(config, logger, folder_name):
     logger.debug(f"Saved file embedding_matrix.npy")
     file_management.save_pkl("ids.pkl", ids)
     logger.debug(f"Saved file ids.pkl")
-
-    kmeans_processor = Kmeans(logger, config, file_management)
-    kmeans_processor.run("Custom Embedder")
 
     hdbscan_processor = Hdbscan(logger, config, file_management)
     hdbscan_processor.run("Custom Embedder")
