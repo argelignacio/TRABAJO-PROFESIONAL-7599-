@@ -5,7 +5,7 @@ import numpy as np
 import pickle as pkl
 
 sys.path.insert(0, os.path.abspath(".."))
-from clustering.embedders.processing_frames import pipeline_v2
+from clustering.embedders.processing_frames import ProcessingFrames
 
 class Executor:
     def __init__(self, logger, df, config, file_management) -> None:
@@ -15,7 +15,9 @@ class Executor:
         self.file_management = file_management
 
     def _custom_embedding(self):
-        embedding_matrix, ids = pipeline_v2(self.df, self.logger, self.config)
+        processing_frames = ProcessingFrames.build_from_df(self.df, self.logger)
+        embedding_matrix, ids = processing_frames.pipeline(self.config)
+
         self.file_management.save_npy("embedding_matrix.npy", embedding_matrix[0])
         self.logger.debug(f"Saved file embedding_matrix.npy")
         self.file_management.save_pkl("ids.pkl", ids)
