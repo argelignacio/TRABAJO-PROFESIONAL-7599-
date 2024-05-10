@@ -24,7 +24,7 @@ class ProcessingFrames:
                 logger.error(e)
 
     def build_from_files(files, logger):
-        df = pd.concat((pd.read_csv(f) for f in files), ignore_index=True)
+        df = pd.concat((pd.read_csv(f, nrows=70000) for f in files), ignore_index=True)
         df['value'] = df['value'].astype('float64') / 1e18
         processing_frames = ProcessingFrames(df, logger)
         return processing_frames
@@ -54,7 +54,7 @@ class ProcessingFrames:
         self.logger.debug("Generator created")
         return generator
 
-    def pipeline(self, config):
+    def pipeline(self, config, pending_model):
         cleaned_df = self._clean_nodes()
         addresses_ids = self._create_ids(cleaned_df)
 
@@ -63,7 +63,7 @@ class ProcessingFrames:
         model = ModelBuilder(addresses_ids, EuclideanLoss, Adam, self.logger, model_v2_config)
         
         generator = self._create_generator(cleaned_df, addresses_ids, config)
-        embeddings = model.compile_model().fit(generator).get_embeddings()
+        embeddings = model.compile_model().fit(generator, pending_model).get_embeddings()
         return embeddings, addresses_ids
 
 def main(logger):
