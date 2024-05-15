@@ -59,7 +59,6 @@ class ProcessingFrames:
         filtered_df = self._filter_nodes_per_min_transactions(cleaned_df, min_transactions + 1)
         addresses_ids = self._create_ids(filtered_df)
 
-
         self.logger.debug("Creating model")
         model_v2_config = config["MODEL_V2"]
         model = ModelBuilder(addresses_ids, EuclideanLoss, Adam, self.logger, model_v2_config)
