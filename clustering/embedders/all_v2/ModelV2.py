@@ -3,6 +3,7 @@ from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Input, Embedding, Dense, Concatenate, GaussianNoise, Reshape
 from keras.callbacks import LearningRateScheduler
 import tensorflow.keras as keras
+from clustering.embedders.all_v1.Loss import EuclideanLoss
 import time
 
 class ModelBuilder():
@@ -23,13 +24,29 @@ class ModelBuilder():
             return self.model_aux.get_layer(name="embedding").get_weights()
         raise Exception("Modelo no entrenado, emb basura.")
 
-    def fit(self, generator):
+    def fit(self, generator, pending_model=None):
+        pending_model_path = self.logger.get_log_path() + "/model_checkpoint.x"
+        print(pending_model)
+        if pending_model:
+            self.model = keras.models.load_model(pending_model_path, custom_objects = { "EuclideanLoss": EuclideanLoss })
+            # self.compile_model()
+
         self.logger.info('Train starting')
         conf = self.model_config
         start_fit = time.time()
 
         earlyStoppingCallback = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=int(conf["patience"]), restore_best_weights=True)
-        self.model.fit(generator, epochs=int(conf["epochs"]), callbacks=[earlyStoppingCallback])
+
+        saveStepsCallback = tf.keras.callbacks.ModelCheckpoint(
+            pending_model_path,
+            monitor='loss',
+            save_best_only=True,
+            mode="min",
+            save_freq="epoch",
+            verbose=1
+        )
+
+        self.model.fit(generator, epochs=int(conf["epochs"]), callbacks=[earlyStoppingCallback, saveStepsCallback])
         end_fit = time.time()
         self.logger.info(f'Model fit in: {(end_fit - start_fit)/60} minutes.')
         self.trained = True
