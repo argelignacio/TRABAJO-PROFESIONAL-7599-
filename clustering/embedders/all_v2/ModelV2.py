@@ -3,6 +3,7 @@ from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Input, Embedding, Dense, Concatenate, GaussianNoise, Reshape
 from keras.callbacks import LearningRateScheduler
 import tensorflow.keras as keras
+from clustering.embedders.all_v1.Loss import EuclideanLoss
 import time
 
 class ModelBuilder():
@@ -25,8 +26,10 @@ class ModelBuilder():
 
     def fit(self, generator, pending_model=None):
         pending_model_path = self.logger.get_log_path() + "/model_checkpoint.x"
+        print(pending_model)
         if pending_model:
-            self.model = keras.models.load_model(pending_model_path)
+            self.model = keras.models.load_model(pending_model_path, custom_objects = { "EuclideanLoss": EuclideanLoss })
+            # self.compile_model()
 
         self.logger.info('Train starting')
         conf = self.model_config
@@ -37,7 +40,10 @@ class ModelBuilder():
         saveStepsCallback = tf.keras.callbacks.ModelCheckpoint(
             pending_model_path,
             monitor='loss',
-            save_best_only=True
+            save_best_only=True,
+            mode="min",
+            save_freq="epoch",
+            verbose=1
         )
 
         self.model.fit(generator, epochs=int(conf["epochs"]), callbacks=[earlyStoppingCallback, saveStepsCallback])
