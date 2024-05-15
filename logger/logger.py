@@ -15,11 +15,16 @@ class MyLogger:
             os.makedirs(folder_path, exist_ok=True)
             file_name = f"logs.log"
             log_file = os.path.join(folder_path, file_name)
+        
+        self.log_path = folder_path
 
         # Rotating file handler
         file_handler = RotatingFileHandler(log_file, mode='a', maxBytes=10*1024*1024, backupCount=5)
         file_handler.setFormatter(formatter)
         self.logger.addHandler(file_handler)
+
+    def get_log_path(self):
+        return self.log_path
 
     def debug(self, message):
         self.logger.debug(f"{self.id} | {message}")
