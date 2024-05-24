@@ -1,0 +1,67 @@
+\documentclass{article}
+\usepackage{titlesec}
+
+% Redefinir el formato de \paragraph para que aparezca en una nueva línea
+\titleformat{\paragraph}
+  {\normalfont\normalsize\bfseries} 
+  {}                                % Etiqueta del número (vacío)
+  {0pt}                             % Separación entre la etiqueta y el título
+  {\newline}  
+
+% Language setting
+% Replace `english' with e.g. `spanish' to change the document language
+\usepackage[english]{babel}
+
+% Set page size and margins
+% Replace `letterpaper' with `a4paper' for UK/EU standard size
+\usepackage[letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+
+% Useful packages
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+
+\title{Análisis comparativo de comunidades en Ethereum: de PoW a PoS}
+\author{You}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+El cambio de Proof of Work a Proof of Stake en la blockchain descentralizada de Ethereum tiene un impacto directo en la función desempeñada por los mineros, ya que son reemplazados por Stakers como nuevos validadores de la red. La disparidad en las dinámicas de este nuevo protocolo plantea interrogantes sobre si ha ocasionado modificaciones en el comportamiento de los usuarios que operan en él, ya sean stakers o participantes frecuentes de la red.
+Las investigaciones previas en Ethereum han priorizado aspectos técnicos, dejando un vacío en el análisis de interacciones entre cuentas y la formación de comunidades. Esto es especialmente notorio en la ausencia de estudios que aborden cómo el comportamiento de usuarios y comunidades ha cambiado con la migración de PoW a PoS.
+Para este análisis utilizaremos un modelo cuya finalidad es crear embeddings de nodos que representen, de una manera inteligente, las relaciones entre addresses en la red. A su vez, este modelo es superador en términos de limitaciones computacionales y de utilización de features, que algoritmos tradicionales para analizar grafos no tienen en cuenta por defecto.
+
+\end{abstract}
+
+\section{Introducción}
+
+La blockchain Ethereum ha sido una de las innovaciones más significativas en el mundo de la tecnología financiera en la última década. Desde su lanzamiento en 2015, Ethereum ha operado bajo un protocolo de consenso conocido como Proof of Work (PoW), el cual ha demostrado ser robusto y confiable en la validación de transacciones y la seguridad de la red, pero presentando problemas como el alto consumo de energía y la centralización de la minería de bloques. Debido a estos problemas, Ethereum ha migrado hacia el protocolo de consenso conocido como Proof of Stake (PoS), el cual incluye varios cambios en la manera de garantizar la integridad durante las transacciones, mejorando la escalabilidad y la eficiencia de la red.
+Algunas preguntas significativas que surgen a partir del cambio de paradigma: ¿Existe un cambio en el comportamiento de los usuarios debido a esta transición? ¿Cuáles son los comportamientos invariantes o que siguen siendo vigentes después del cambio? ¿Cómo variaron las relaciones entre usuarios y comunidades?
+
+El presente proyecto tiene como objetivo principal contestar estas preguntas. A través de un análisis exhaustivo, buscamos proporcionar una visión clara de los patrones de comportamiento de quienes operan sobre la red de Ethereum en sus dos protocolos de consenso principales, PoW y PoS. Al hacerlo, esperamos contribuir a la comprensión de las implicaciones de esta transición para la comunidad Blockchain, los desarrolladores y los usuarios de Ethereum.
+
+
+\subsection{Investigación}
+
+\subsubsection{Artículos relacionados}
+
+\paragraph{Ethereum - Yellow paper } 
+Para establecer una base sólida y comprender exhaustivamente los aspectos fundamentales de Ethereum, incluyendo su red y el proceso de transacciones, optamos por examinar el documento original de Ethereum. \newline
+\href{https://ethereum.github.io/yellowpaper/paper.pdf}{ETHEREUM: A SECURE DECENTRALISED GENERALISED TRANSACTION LEDGER}
+
+El documento proporciona una riqueza de información crucial, detallando temas fundamentales como los campos de las transacciones, la naturaleza de los bloques, el protocolo de consenso (entonces basado en Prueba de Trabajo, PoW), y otros aspectos de suma importancia.
+
+\paragraph{Artículos muy relacionados}
+
+Como una sugerencia inicial y como punto de partida para abordar el tema, se nos recomendó revisar el siguiente documento académico acerca de la detección de comunidades ilícitas en la red de Bitcoin. Aunque en sus conclusiones se menciona la falta de resultados satisfactorios, el documento proporciona una definición de comunidades, propone diversas técnicas y evalúa el rendimiento mediante métricas específicas.
+Una idea inicial era encarar el trabajo sobre esto mismo, pero en ethereum, relacionándolo con cambio de protocolo de consenso.
+\newline
+\href{https://www.mdpi.com/1099-4300/25/7/1069}{Illegal Community Detection in Bitcoin Transaction Networks}
+Luego de eso, buscamos artículos recientes que recopilaran algo de la situación actual científica respecto a la red de ethereum y su análisis como un grafo. Este paper nos dio un punto de partida en lo que respecta a la diversidad de tipos de cuentas y tipos de transacciones dentro de la red. Viendo esto, nos dimos cuenta que debíamos limitar el scope del grafo, ya que los distintos tipos de cuenta y transacciones se comportan de una manera muy diferente. Debido a esto, decidimos focalizarnos en las transacciones que tienen un value, transaccionado el token Ether.
+
+
+\bibliographystyle{alpha}
+\bibliography{sample}
+
+\end{document}
