@@ -1,30 +1,53 @@
 \documentclass{article}
-\usepackage{titlesec}
 
-% Redefinir el formato de \paragraph para que aparezca en una nueva línea
-\titleformat{\paragraph}
-  {\normalfont\normalsize\bfseries} 
-  {}                                % Etiqueta del número (vacío)
-  {0pt}                             % Separación entre la etiqueta y el título
-  {\newline}  
+\usepackage{arxiv}
 
-% Language setting
-% Replace `english' with e.g. `spanish' to change the document language
+\usepackage[utf8]{inputenc} % allow utf-8 input
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage{hyperref}       % hyperlinks
+\usepackage{url}            % simple URL typesetting
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{microtype}      % microtypography
+\usepackage{cleveref}       % smart cross-referencing
+\usepackage{lipsum}         % Can be removed after putting your text content
+\usepackage{graphicx}
+\usepackage{natbib}
+\usepackage{doi}
 \usepackage[english]{babel}
 
-% Set page size and margins
-% Replace `letterpaper' with `a4paper' for UK/EU standard size
-\usepackage[letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
-
-% Useful packages
-\usepackage{amsmath}
 \usepackage{graphicx}
-\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+
 
 \title{Análisis comparativo de comunidades en Ethereum: de PoW a PoS}
-\author{You}
+
+\newif\ifuniqueAffiliation
+% Comment to use multiple affiliations variant of author block 
+\uniqueAffiliationtrue
+\ifuniqueAffiliation % Standard variant of author block
+\author{{
+	\hspace{1mm}Ignacio Argel} \\
+	FIUBA\\
+	\texttt{iargel@fi.uba.ar} \\
+	%% examples of more authors
+	\And
+	{\hspace{1mm}Manuel V.~Battan} \\
+	FIUBA\\
+	\texttt{mvbattan@fi.uba.ar} \\
+	\AND
+	{\hspace{1mm}Lucas Bilo} \\
+	FIUBA\\
+	\texttt{lbilo@fi.uba.ar} \\
+	\And
+	{\hspace{1mm}Nahuel H.~Spiguelman} \\
+	FIUBA\\
+	\texttt{nspiguelman@fi.uba.ar} \\
+}
+
 
 \begin{document}
+
 \maketitle
 
 \begin{abstract}
@@ -33,6 +56,7 @@ Las investigaciones previas en Ethereum han priorizado aspectos técnicos, dejan
 Para este análisis utilizaremos un modelo cuya finalidad es crear embeddings de nodos que representen, de una manera inteligente, las relaciones entre addresses en la red. A su vez, este modelo es superador en términos de limitaciones computacionales y de utilización de features, que algoritmos tradicionales para analizar grafos no tienen en cuenta por defecto.
 
 \end{abstract}
+\clearpage
 
 \section{Introducción}
 
@@ -46,22 +70,106 @@ El presente proyecto tiene como objetivo principal contestar estas preguntas. A 
 
 \subsubsection{Artículos relacionados}
 
-\paragraph{Ethereum - Yellow paper } 
+\paragraph{Ethereum - Yellow paper } \mbox{}\\
 Para establecer una base sólida y comprender exhaustivamente los aspectos fundamentales de Ethereum, incluyendo su red y el proceso de transacciones, optamos por examinar el documento original de Ethereum. \newline
+
 \href{https://ethereum.github.io/yellowpaper/paper.pdf}{ETHEREUM: A SECURE DECENTRALISED GENERALISED TRANSACTION LEDGER}
 
 El documento proporciona una riqueza de información crucial, detallando temas fundamentales como los campos de las transacciones, la naturaleza de los bloques, el protocolo de consenso (entonces basado en Prueba de Trabajo, PoW), y otros aspectos de suma importancia.
 
-\paragraph{Artículos muy relacionados}
+\paragraph{Artículos muy relacionados}\mbox{}\\
 
 Como una sugerencia inicial y como punto de partida para abordar el tema, se nos recomendó revisar el siguiente documento académico acerca de la detección de comunidades ilícitas en la red de Bitcoin. Aunque en sus conclusiones se menciona la falta de resultados satisfactorios, el documento proporciona una definición de comunidades, propone diversas técnicas y evalúa el rendimiento mediante métricas específicas.
 Una idea inicial era encarar el trabajo sobre esto mismo, pero en ethereum, relacionándolo con cambio de protocolo de consenso.
 \newline
+
 \href{https://www.mdpi.com/1099-4300/25/7/1069}{Illegal Community Detection in Bitcoin Transaction Networks}
+\newline
+
 Luego de eso, buscamos artículos recientes que recopilaran algo de la situación actual científica respecto a la red de ethereum y su análisis como un grafo. Este paper nos dio un punto de partida en lo que respecta a la diversidad de tipos de cuentas y tipos de transacciones dentro de la red. Viendo esto, nos dimos cuenta que debíamos limitar el scope del grafo, ya que los distintos tipos de cuenta y transacciones se comportan de una manera muy diferente. Debido a esto, decidimos focalizarnos en las transacciones que tienen un value, transaccionado el token Ether.
+\newline
+
+\href{https://homes.cs.aau.dk/~Arijit/Papers/IEEE_Blockchain_2022_Ethereum_Blockchain_Graph_Data_Survey.pdf}{Graph Analysis of the Ethereum Blockchain Data:A Survey of Datasets, Methods, and Future Work}
+\newline
+
+El último paper y estrechamente vinculado que hemos identificado se enfoca en la identificación de comunidades dentro de redes sociales. En este contexto, se sugiere la aplicación de la matriz de covarianza de salida de baja dimensionalidad sobre los datos de transacciones, seguido por la extracción de los K autovectores. Posteriormente, se emplea el algoritmo de K-means para la partición de los nodos en K grupos distintos. Es interesante que la conclusión y las pruebas definitivas, se hacen sobre un grafo de tamaño reducido. 
+
+\href{https://arxiv.org/pdf/2101.06406}{Community Detection in Blockchain Social Networks}
+\newline
+
+Una hipótesis surgida de estos análisis es si es la mejor opción buscar comunidades utilizando K-means, ya que el algoritmo obligatoriamente separa en K clusters, sin dejar a nadie fuera de una comunidad. 
+
+\subsubsection{Papers complementarios}
+Si bien estos papers no fueron foco principal de nuestra investigación, los revisamos de forma rápida viendo si encontrábamos insights inspiradores o novedosos.
+
+Este paper es uno de los primeros trabajos científicos que definen una comunidad, lo que la hace una lectura muy interesante.
+
+\href{https://www.ncbi.nlm.nih.gov/pmc/articles/PMC122977/pdf/pq1202007821.pdf}{Community structure in social and
+biological networks}
+\newline
+
+En el siguiente se presenta el primer estudio empírico a gran escala sobre el uso de Inline Assembly en contratos inteligentes de Ethereum, analizando millones de contratos desde diversas perspectivas técnicas. Proporciona nuevas observaciones y percepciones valiosas para el desarrollo de contratos inteligentes y la evolución de Solidity y sus compiladores.
+
+\href{https://drive.google.com/file/d/111l8_vf7Gt7RxygjuBM8WQWLTQL700jY/view}{Large-Scale Empirical Study of Inline Assembly on 7.6 Million Ethereum Smart Contracts}
+\newline
+
+******INSERTE SUS PAPERS LEIDOS ACA*******
+
+\section{Fuente de datos}
+
+La primera complicación con la que nos enfrentamos fue la búsqueda de una fuente de datos íntegra, sin limitaciones significativas en términos de cantidad y accesibilidad. Inicialmente, exploramos la posibilidad de utilizar APIs con el propósito de obtener muestras extensas y almacenarlas. Sin embargo, la restricción en el número de solicitudes permitidas, junto con la complejidad inherente de realizar una cantidad considerable de peticiones y la gestión de almacenamiento para tal volumen de datos, nos llevó a desechar esta estrategia.
+
+Ejemplos de APIs revisadas (entre otras):
+\begin{list}{\labelitemi}{\leftmargin=4em}
+    \item \href{https://www.blockchain.com/explorer/api/blockchain_api}{Blockchain Data} 
+    \item \href{https://etherscan.io/apis}{Etherscan}
+\end{list}
+
+Posteriormente, consideramos la posibilidad de replicar un nodo. Contábamos con diversas alternativas, si bien replicar un nodo plantea ciertas dificultades técnicas y de almacenamiento. Las alternativas que evaluamos fueron las siguientes:
+\begin{itemize}
+    \item Nodo completo (Full node): Este tipo de nodo conserva y administra una réplica integral de la cadena de bloques de Ethereum, aunque con ciertos recortes (pruning). Esto abarca todas las transacciones efectuadas en la red, así como el estado actualizado de todas las cuentas y contratos inteligentes hasta un punto en el tiempo determinado. La implementación de este tipo de nodo requiere una capacidad de almacenamiento de aproximadamente 1.5 TB.
+    \item Nodo de archivo (Archive node): Se trata de una categoría de nodo que preserva todo el historial completo de la cadena de bloques desde su bloque inicial hasta el más reciente. Esto incluye todas las transacciones, contratos inteligentes, eventos y estados históricos de todas las cuentas. La variante más ligera de este tipo de nodo requiere alrededor de 10 TB de almacenamiento hasta mayo de 2022.
+\end{itemize}
+Sin embargo, esta opción fue desechada debido a la limitación de recursos de almacenamiento disponibles y a la falta de necesidad de poseer los datos en su totalidad.
+
+Por último, hemos identificado un  \href{https://cloud.google.com/blog/products/data-analytics/ethereum-bigquery-public-dataset-smart-contract-analytics}{dataset en BigQuery} que, aunque no está sincronizado en tiempo real, se actualiza diariamente. Las consultas realizadas en este conjunto de datos son gratuitas y, para propósitos prácticos, su límite es inalcanzable. Los campos disponibles en este conjunto de datos son los siguientes: 
+\begin{itemize}
+    \item block\_hash
+    \item block\_number
+    \item block\_timestamp
+    \item transaction\_hash
+    \item transaction\_index
+    \item nonce
+    \item from\_address
+    \item to\_address
+    \item value
+    \item value\_lossless
+    \item gas
+    \item gas\_price
+    \item max\_fee\_per\_gas
+    \item max\_priority\_fee\_per\_gas
+    \item transaction\_type
+    \item chain\_id
+    \item r
+    \item s
+    \item v
+    \item y\_parity
+\end{itemize}
+ Con acceso a este conjunto de datos y la capacidad de realizar consultas sobre cualquier ventana temporal desde el inicio de la cadena hasta el día anterior al actual, tenemos la información necesaria para nuestros análisis.
+
+
+\section{Análisis exploratorio}
+
+\subsection{Introducción}
+
+Una vez conseguidos los datos, debíamos empezar a analizar los mismos, con el fin de conocer mejor los datos, su evolución y en base a eso tomar la decisión de que subset de datos pre y post cambio de protocolo de consenso vamos a elegir para la comparación final.
+
+Para esto, decidimos plantear una serie de métricas 
+
 
 
 \bibliographystyle{alpha}
-\bibliography{sample}
+%\bibliography{sample}
+%\nocite{*}
 
 \end{document}

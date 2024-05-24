@@ -1,15 +1,15 @@
 # Fdb version 3
-["bibtex template"] 1710198145 "template.aux" "template.bbl" "template" 1710198153
+["bibtex template"] 1710198145 "template.aux" "template.bbl" "template" 1716583011
   "/usr/share/texlive/texmf-dist/bibtex/bst/natbib/unsrtnat.bst" 1233624470 24550 a41a6405f4de768c43e871d9fbce2bc8 ""
-  "references.bib" 1709937813 1034 64385ee9e7ff2a96c7017f444f65a8e1 ""
-  "template.aux" 1710198153 2980 2ae15f6d6f021085c4132d1c64c1c495 "pdflatex"
+  "references.bib" 1716581928 1034 64385ee9e7ff2a96c7017f444f65a8e1 ""
+  "template.aux" 1716583011 2980 2ae15f6d6f021085c4132d1c64c1c495 "pdflatex"
   (generated)
   "template.bbl"
   "template.blg"
-["pdflatex"] 1710198152 "/home/ignacioargel/Documents/tpp/informe/template.tex" "template.pdf" "template" 1710198153
+["pdflatex"] 1716583010 "/home/ignacioargel/Documents/tpp/informe/template.tex" "template.pdf" "template" 1716583011
   "/etc/texmf/web2c/texmf.cnf" 1661989298 475 c0e671620eb5563b2130f56340a5fde8 ""
   "/home/ignacioargel/.texlive2021/texmf-var/fonts/pk/ljfour/jknappen/ec/ectt1000.600pk" 1664725546 20008 3ca80131eabd01be0f0e9a165c709f7a ""
-  "/home/ignacioargel/Documents/tpp/informe/template.tex" 1710198152 11716 203fdfae7053f94fe7836bb8739cf563 ""
+  "/home/ignacioargel/Documents/tpp/informe/template.tex" 1716583010 11716 203fdfae7053f94fe7836bb8739cf563 ""
   "/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc" 1165713224 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/adobe/times/ptmb8r.tfm" 1136768653 4524 6bce29db5bc272ba5f332261583fee9c ""
@@ -129,12 +129,12 @@
   "/usr/share/texlive/texmf-dist/web2c/texmf.cnf" 1644012257 39432 7155514e09a3d69036fac785183a21c2 ""
   "/usr/share/texmf/web2c/texmf.cnf" 1644012257 39432 7155514e09a3d69036fac785183a21c2 ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1661989312 128028 f533b797fba58d231669ea19e894e23e ""
-  "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1685576895 1405650 f26e36d20edcd2b7ad1ed9c13ef574a5 ""
-  "arxiv.sty" 1709937813 7642 824ef14f3548279d54b419cf5e0f3098 ""
-  "template.aux" 1710198153 2980 2ae15f6d6f021085c4132d1c64c1c495 "pdflatex"
-  "template.bbl" 1710198145 1336 3e0ab79d482c90661165dbc126bcdace "bibtex template"
-  "template.out" 1710198153 1540 69d4833c4b6815b6d738063b8554f541 "pdflatex"
-  "template.tex" 1710198152 11716 203fdfae7053f94fe7836bb8739cf563 ""
+  "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1710495386 1405646 73df91cd13fd9a07164a3386c77d9ed6 ""
+  "arxiv.sty" 1716581928 7642 824ef14f3548279d54b419cf5e0f3098 ""
+  "template.aux" 1716583011 2980 2ae15f6d6f021085c4132d1c64c1c495 "pdflatex"
+  "template.bbl" 1716581928 1336 3e0ab79d482c90661165dbc126bcdace "bibtex template"
+  "template.out" 1716583011 1540 69d4833c4b6815b6d738063b8554f541 "pdflatex"
+  "template.tex" 1716583010 11716 203fdfae7053f94fe7836bb8739cf563 ""
   (generated)
   "template.aux"
   "template.log"
