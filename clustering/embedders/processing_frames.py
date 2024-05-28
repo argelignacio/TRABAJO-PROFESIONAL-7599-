@@ -22,7 +22,7 @@ class ProcessingFrames:
                 logger.error(e)
 
     def build_from_files(files, logger):
-        df = pd.concat((pd.read_csv(f, nrows=70000) for f in files), ignore_index=True)
+        df = pd.concat((pd.read_csv(f) for f in files), ignore_index=True)
         df['value'] = df['value'].astype('float64') / 1e18
         processing_frames = ProcessingFrames(df, logger)
         return processing_frames
@@ -37,7 +37,7 @@ class ProcessingFrames:
         df_tmp = df_tmp[~df_tmp.to_address.isna()]
         df_tmp = df_tmp[~df_tmp.from_address.isna()]
         df_tmp = df_tmp[df_tmp["from_address"] != df_tmp["to_address"]]
-        uniques = df_tmp['from_address'].append(df_tmp['to_address']).value_counts()
+        uniques = df_tmp['from_address']._append(df_tmp['to_address']).value_counts()
         unique_values = uniques[uniques == 1]
         return df_tmp[~(df_tmp['from_address'].isin(unique_values.index) | df_tmp['to_address'].isin(unique_values.index))]
 
@@ -56,7 +56,9 @@ class ProcessingFrames:
     def pipeline(self, config, pending_model):
         cleaned_df = self._clean_nodes()
         min_transactions = self._search_max_transaccions_below_percentage(cleaned_df)
-        filtered_df = self._filter_nodes_per_min_transactions(cleaned_df, min_transactions + 1)
+        # filtered_df = self._filter_nodes_per_min_transactions(cleaned_df, min_transactions + 1)
+        filtered_df = self._filter_per_transactions(cleaned_df, 0.2)
+
         addresses_ids = self._create_ids(filtered_df)
 
         self.logger.debug("Creating model")
