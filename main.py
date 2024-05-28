@@ -45,27 +45,36 @@ def mode_without_err(x):
         return mode[0]
     return mode
 
+
 def calculate_precision(method, indexes, mapping, tmp_mapping, full_nodes, logger, file_management):
     for i in indexes:
         mapping[method] = mapping.get(method, {})
-        mapping[method][tmp_mapping.loc[i]] = i
+        if tmp_mapping.loc[i] == -1:
+            mapping[method][tmp_mapping.loc[i]] = -1
+        else:
+            mapping[method][tmp_mapping.loc[i]] = i
     
     full_nodes[f"{method}_mapped"] = full_nodes.apply(lambda x: mapping[method].get(int(x[method])), axis=1)
 
     result = dict()
     
     result_act = full_nodes.apply(lambda x: x[f"{method}_mapped"] == x.real_cluster, axis=1).value_counts()
-    if len(result_act) == 1:
-        if result_act.index[0]:
-            logger.info(f"Precision_{method}: 1")
-            result[f"Precision_{method}"] = result.get(f"Precision_{method}", 1)
-        else:
-            logger.info(f"Precision_{method}: 0")
-            result[f"Precision_{method}"] = result.get(f"Precision_{method}", 0)
+    result_act_dim = full_nodes.apply(lambda x: None if x[f"{method}_mapped"] == -1 else x[f"{method}_mapped"] == x.real_cluster, axis=1).value_counts()
+
+    TP = int(result_act.get(True, 0))
+    FP = int(result_act.get(False, 0))
+    precision = TP / (TP + FP)
+    logger.info(f"Precision_{method}: {precision}")
+    result[f"Precision_{method}"] = precision
+
+    TP_reduced = int(result_act_dim.get(True, 0))
+    FP_reduced = int(result_act_dim.get(False, 0))
+    if TP_reduced + FP_reduced == 0:
+        precision_reduced = None
     else:
-        precision = result.get(f"Precision_{method}", int(result_act[True]) / (int(result_act[False])+int(result_act[True])))
-        logger.info(f"Precision_{method}: {precision}")
-        result[f"Precision_{method}"] = precision
+        precision_reduced = TP_reduced / (TP_reduced + FP_reduced)
+    logger.info(f"Precision_reduced_{method}: {precision_reduced}")
+    result[f"Precision_reduced_{method}"] = precision_reduced
 
     for_df = {}
     for key in result.keys():

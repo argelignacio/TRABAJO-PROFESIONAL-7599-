@@ -28,20 +28,14 @@ class GeneratorTriplet(Sequence):
             .rename(columns={'block_timestamp': 'count_transactions', 'value': 'total_amount'})\
             .reset_index()
         
+        df_temp = df.groupby('from_address').agg({'count_transactions': 'sum', 'total_amount': 'sum' })
+
+        df['transaction_importance_pair'] = (df['count_transactions'] - df['count_transactions'].mean()) / df['count_transactions'].std()
+        df['amount_importance_pair'] = df['total_amount'] / df['from_address'].map(df_temp['total_amount'])
+
         weigth = float(self.config["GENERATOR_V2"]["weigth"])
-
-        # lo que intenta es darle un peso a aquellos que frecuentan transacciones
-        normalized_count_transactions = (df['count_transactions'] - df['count_transactions'].mean()) / df['count_transactions'].std()
-
-        # lo que intenta es darle un peso a aquellos que envian mas dinero
-        average_amount = df['total_amount'] / df['count_transactions']
-        gravity_const_mean = average_amount.mean()
-        gravity_const_std = average_amount.std()
-        normalized_gravity_const = (average_amount - gravity_const_mean) / gravity_const_std
-
-        # TODO: podriamos tener dos weigth diferentes teniendo en cuenta que podria tener diferentes importancias las frecuencias y los montos
-        # TODO: buscar una relacion para los weigth y que no sea estático
-        df['gravity_const'] = weigth*(normalized_gravity_const + normalized_count_transactions)
+        
+        df['gravity_const'] = weigth*(df['transaction_importance_pair'] + df['amount_importance_pair'])        
         self.logger.debug("Dataframe reduced.")
         return df
 
