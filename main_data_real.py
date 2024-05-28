@@ -13,7 +13,9 @@ def start(config, logger, folder_name, pending_model=False):
     file_management = FileManagement(os.path.join(os.getcwd(), "results", folder_name))
 
     files = [
-        "../datos/2023/July/2023-07-01.csv"
+        "../datos/2023/July/2023-07-01.csv",
+        "../datos/2023/July/2023-07-02.csv",
+        "../datos/2023/July/2023-07-03.csv"
     ]
 
     processing_frames = ProcessingFrames.build_from_files(files, logger)

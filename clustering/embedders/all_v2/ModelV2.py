@@ -26,10 +26,8 @@ class ModelBuilder():
 
     def fit(self, generator, pending_model=None):
         pending_model_path = self.logger.get_log_path() + "/model_checkpoint.x"
-        print(pending_model)
         if pending_model:
             self.model = keras.models.load_model(pending_model_path, custom_objects = { "EuclideanLoss": EuclideanLoss })
-            # self.compile_model()
 
         self.logger.info('Train starting')
         conf = self.model_config
