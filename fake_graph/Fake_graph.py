@@ -30,6 +30,7 @@ class GeneratorFakeGraph:
                 nodes_per_cluster.append(floating_count)
             
             data = []
+            timestamp = 0
             for _ in range(n_transactions):
                 if random.random() < floating_nodes_proportion:
                     cluster_aux = random.randint(0, n_clusters)
@@ -44,7 +45,7 @@ class GeneratorFakeGraph:
                         'to_address': id_2[0], 
                         'cluster_from': id_1[1], 
                         'cluster_to': id_2[1], 
-                        'block_timestamp': 1, 
+                        'block_timestamp': timestamp, 
                         'value': (random.random() * 1000*  intern_ratio)
                     }          
                 elif random.random() < probability_intern:
@@ -56,7 +57,7 @@ class GeneratorFakeGraph:
                         'to_address': id_2[0], 
                         'cluster_from': id_1[1], 
                         'cluster_to': id_2[1], 
-                        'block_timestamp': 1, 
+                        'block_timestamp': timestamp, 
                         'value': (random.random() * 1000)
                     }
                 else:
@@ -69,11 +70,10 @@ class GeneratorFakeGraph:
                         'to_address': id_2[0], 
                         'cluster_from': id_1[1], 
                         'cluster_to': id_2[1], 
-                        'block_timestamp': 1, 
+                        'block_timestamp': timestamp, 
                         'value': (random.random() * 1000 * intern_ratio)
                     }
-                
-
                 data.append(new_row)
+                timestamp += 1
             logger.debug("Fake Graph was built")
             return pd.DataFrame(columns=['from_address', 'to_address', 'cluster_from', 'cluster_to', 'block_timestamp', 'value'], data=data)
