@@ -1,8 +1,8 @@
 # Fdb version 3
-["pdflatex"] 1716584419 "/home/ignacioargel/Documents/tpp/informe/informev2/informe.tex" "informe.pdf" "informe" 1716584420
+["pdflatex"] 1717020509 "/home/ignacioargel/Documents/tpp/informe/informev2/informe.tex" "informe.pdf" "informe" 1717020509
   "/etc/texmf/web2c/texmf.cnf" 1661989298 475 c0e671620eb5563b2130f56340a5fde8 ""
   "/home/ignacioargel/.texlive2021/texmf-var/fonts/pk/ljfour/jknappen/ec/ectt1000.600pk" 1664725546 20008 3ca80131eabd01be0f0e9a165c709f7a ""
-  "/home/ignacioargel/Documents/tpp/informe/informev2/informe.tex" 1716584419 11995 bcffa3e12fe5f7a9a35d36a2e0fc074f ""
+  "/home/ignacioargel/Documents/tpp/informe/informev2/informe.tex" 1717020508 21948 e95e487a69a92b47897e6ddc936cd58b ""
   "/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc" 1165713224 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/adobe/times/ptmb8r.tfm" 1136768653 4524 6bce29db5bc272ba5f332261583fee9c ""
@@ -20,6 +20,7 @@
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm10.tfm" 1246382020 908 2921f8a10601f252058503cc6570e581 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm5.tfm" 1246382020 940 75ac932a52f80982a9f8ea75d03a34cf ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm7.tfm" 1246382020 940 228d6584342e91276bf566bcf9716b83 ""
+  "/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb" 1248133631 36299 5f9df58c2139e7edcf37c8fca4bd384d ""
   "/usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmb8a.pfb" 1136849748 44729 811d6c62865936705a31c797a1d5dada ""
   "/usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmr8a.pfb" 1136849748 46026 6dab18b61c907687b520c72847215a68 ""
   "/usr/share/texlive/texmf-dist/fonts/vf/adobe/times/ptmb8t.vf" 1136768653 2340 df9c920cc5688ebbf16a93f45ce7bdd3 ""
@@ -106,9 +107,9 @@
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1661989312 128028 f533b797fba58d231669ea19e894e23e ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1710495386 1405646 73df91cd13fd9a07164a3386c77d9ed6 ""
   "arxiv.sty" 1716582855 7642 824ef14f3548279d54b419cf5e0f3098 ""
-  "informe.aux" 1716584420 1865 ed98ed3e068d45f90a2a08af8587282e "pdflatex"
-  "informe.out" 1716584420 992 45c65931e254e435af49b08a1d4f1e06 "pdflatex"
-  "informe.tex" 1716584419 11995 bcffa3e12fe5f7a9a35d36a2e0fc074f ""
+  "informe.aux" 1717020509 2635 0e289843e8c9037a55b16756ce3ca842 "pdflatex"
+  "informe.out" 1717020509 1795 9e8d176faa77774dd9a90a98c62e3175 "pdflatex"
+  "informe.tex" 1717020508 21948 e95e487a69a92b47897e6ddc936cd58b ""
   (generated)
   "informe.aux"
   "informe.log"

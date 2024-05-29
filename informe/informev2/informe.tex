@@ -51,9 +51,9 @@
 \maketitle
 
 \begin{abstract}
-El cambio de Proof of Work a Proof of Stake en la blockchain descentralizada de Ethereum tiene un impacto directo en la función desempeñada por los mineros, ya que son reemplazados por Stakers como nuevos validadores de la red. La disparidad en las dinámicas de este nuevo protocolo plantea interrogantes sobre si ha ocasionado modificaciones en el comportamiento de los usuarios que operan en él, ya sean stakers o participantes frecuentes de la red.
-Las investigaciones previas en Ethereum han priorizado aspectos técnicos, dejando un vacío en el análisis de interacciones entre cuentas y la formación de comunidades. Esto es especialmente notorio en la ausencia de estudios que aborden cómo el comportamiento de usuarios y comunidades ha cambiado con la migración de PoW a PoS.
-Para este análisis utilizaremos un modelo cuya finalidad es crear embeddings de nodos que representen, de una manera inteligente, las relaciones entre addresses en la red. A su vez, este modelo es superador en términos de limitaciones computacionales y de utilización de features, que algoritmos tradicionales para analizar grafos no tienen en cuenta por defecto.
+    El cambio de Proof of Work a Proof of Stake en la blockchain descentralizada de Ethereum tiene un impacto directo en la función desempeñada por los mineros, ya que son reemplazados por Stakers como nuevos validadores de la red. La disparidad en las dinámicas de este nuevo protocolo plantea interrogantes sobre si ha ocasionado modificaciones en el comportamiento de los usuarios que operan en él, ya sean stakers o participantes frecuentes de la red.
+    Las investigaciones previas en Ethereum han priorizado aspectos técnicos, dejando un vacío en el análisis de interacciones entre cuentas y la formación de comunidades. Esto es especialmente notorio en la ausencia de estudios que aborden cómo el comportamiento de usuarios y comunidades ha cambiado con la migración de PoW a PoS.
+    Para este análisis utilizaremos un modelo de Deep Learning cuya finalidad es crear embeddings de nodos que representen, de una manera inteligente, las relaciones entre addresses en la red. A su vez, el método propuesto es superador en términos de limitaciones computacionales y de utilización de features respecto a algoritmos tradicionales para analizar grafos.
 
 \end{abstract}
 \clearpage
@@ -115,7 +115,8 @@ En el siguiente se presenta el primer estudio empírico a gran escala sobre el u
 
 ******INSERTE SUS PAPERS LEIDOS ACA*******
 
-\section{Fuente de datos}
+\subsection{Materiales y métodos}
+\subsubsection{Fuente de datos}
 
 La primera complicación con la que nos enfrentamos fue la búsqueda de una fuente de datos íntegra, sin limitaciones significativas en términos de cantidad y accesibilidad. Inicialmente, exploramos la posibilidad de utilizar APIs con el propósito de obtener muestras extensas y almacenarlas. Sin embargo, la restricción en el número de solicitudes permitidas, junto con la complejidad inherente de realizar una cantidad considerable de peticiones y la gestión de almacenamiento para tal volumen de datos, nos llevó a desechar esta estrategia.
 
@@ -134,33 +135,100 @@ Sin embargo, esta opción fue desechada debido a la limitación de recursos de a
 
 Por último, hemos identificado un  \href{https://cloud.google.com/blog/products/data-analytics/ethereum-bigquery-public-dataset-smart-contract-analytics}{dataset en BigQuery} que, aunque no está sincronizado en tiempo real, se actualiza diariamente. Las consultas realizadas en este conjunto de datos son gratuitas y, para propósitos prácticos, su límite es inalcanzable. Los campos disponibles en este conjunto de datos son los siguientes: 
 \begin{itemize}
-    \item block\_hash
-    \item block\_number
-    \item block\_timestamp
-    \item transaction\_hash
-    \item transaction\_index
-    \item nonce
-    \item from\_address
-    \item to\_address
-    \item value
-    \item value\_lossless
-    \item gas
-    \item gas\_price
-    \item max\_fee\_per\_gas
-    \item max\_priority\_fee\_per\_gas
-    \item transaction\_type
-    \item chain\_id
-    \item r
-    \item s
-    \item v
-    \item y\_parity
+    \item \textbf{block\_hash}: El identificador único de un bloque en la blockchain, el cual es generado a partir de la información contenida en el bloque mediante una función de hash.
+    \item \textbf{block\_number}: El número de secuencia del bloque dentro de la blockchain.
+    \item \textbf{block\_timestamp}: Es la hora y fecha exacta en la que el bloque fue minado.
+    \item \textbf{transaction\_hash}: El identificador único de una transacción específica, el cual es generado a partir de la información de la transacción mediante una función de hash.
+    \item \textbf{transaction\_index}: La posición de la transacción dentro del bloque. 
+    \item \textbf{nonce}: Un número utilizado para garantizar que cada transacción sólo pueda ser procesada una vez. Es específico de la cuenta del remitente y se incrementa con cada transacción enviada desde esa cuenta.
+    \item \textbf{from\_address}: La dirección de Ethereum del remitente de la transacción.
+    \item \textbf{to\_address}: La dirección de Ethereum del destinatario de la transacción. Puede ser la dirección de un usuario o la dirección de un smart contract.
+    \item \textbf{value}: Cantidad de Ether transferida en la transacción, está expresada en wei.
+    \item \textbf{value\_lossless}: Es el mismo valor que el campo “value” pero está expresado de otra forma para evitar cierta precisión en algunas aplicaciones. 
+    \item \textbf{gas}: es la tarifa que se paga en la transacción. Está expresada en wei.
+    \item \textbf{gas\_price}: Es el precio en Ether de una unidad de gas usada en la transacción. Está expresada en wei.
+    \item \textbf{max\_fee\_per\_gas}: es la cantidad máxima de gas que el usuario remitente está dispuesto a pagar para que su transacción se incluya en un bloque. Está expresada en wei.
+    \item \textbf{max\_priority\_fee\_per\_gas}: Es determinada por el usuario remitente y es opcional. Indica la cantidad de gas que se está dispuesto a pagar a los mineros como “propina” por la transacción. Está expresada en wei.
+    \item \textbf{transaction\_type}: Indica el tipo de la transacción. Puede ser 0 para transacciones regulares o 2 para transacciones EIP-1559.
+    \item \textbf{chain\_id}: Identificador único para la cadena de bloques (Ethereum Mainnet, Testnet, entre otros). 
+    \item \textbf{r y s}: Son componentes de la firma digital de la transacción. En conjunto se utilizan para verificar que la transacción fue firmada por el propietario de la clave privada correspondiente a la dirección de origen de la transacción.
+    \item \textbf{v}: Es un parámetro de la firma digital de la transacción, se usa para la recuperación de la clave pública. 
+    \item \textbf{y\_parity}: Es un parámetro de la firma digital de la transacción y es una versión más compacta y moderna de lo que indica el campo v. Se introdujo en las transacciones de tipo EIP-1559 y EIP-2930.
 \end{itemize}
+A continuación, se adjunta una transacción con datos reales:
+\begin{tabbing}
+  "block\_hash": "0xbe6dd03c251417b51020f5358c5981fd1627575c256dd98d6d24dd7687997d32",\\
+  "block\_number": "17329020", \\
+  "block\_timestamp": "2023-05-24 12:23:35.000000 UTC",\\
+  "transaction\_hash": "0x5fe28c92492cfd4107b867da66036cf108a2a7b09baed29fdc543d2ba5778574",\\
+  "transaction\_index": "79",\\
+  "nonce": "4894815",\\
+  "from\_address": "0x56eddb7aa87536c09ccc2793473599fd21a8b17f",\\
+  "to\_address": "0x86ba5d7600e1ce97fdf821e96a0b4ec729843ab2",\\
+  "value": "9208340000000000",\\
+  "value\_lossless": "9208340000000000",\\
+  "gas": "207128",\\
+  "gas\_price": "32342796700",\\
+  "input": "0x",\\
+  "max\_fee\_per\_gas": "102000000000",\\
+  "max\_priority\_fee\_per\_gas": "2000000000",\\
+  "transaction\_type": "2",\\
+  "chain\_id": "1",\\
+  "access\_list": [],\\
+  "r": "0x8e7de580875602ab722aaeb890eb2bfb88443e34338fd2936408e89d4e5b456c",\\
+  "s": "0x937cd39f66fb771a8c1216b296f1c32b42c5dc013054b808596cad794ca084a",\\
+  "v": "0x0",\\
+  "y\_parity": null\\
+
+\end{tabbing}
+
+
  Con acceso a este conjunto de datos y la capacidad de realizar consultas sobre cualquier ventana temporal desde el inicio de la cadena hasta el día anterior al actual, tenemos la información necesaria para nuestros análisis.
 
+\subsubsection{node2vec}
+node2vec es un algoritmo para aprendizaje de representaciones de nodos en redes. Su objetivo es mapear los nodos de un grafo a un espacio vectorial continuo de baja dimensión, preservando las propiedades y estructuras del grafo original. Funciona en dos fases principales:
 
-\section{Análisis exploratorio}
+Generación de Trayectorias Aleatorias: node2vec utiliza una combinación de técnicas de paseo aleatorio (random walks) sesgado para explorar el grafo. Ajusta dos parámetros, 
+$p$ y $q$, que permiten controlar el equilibrio entre la exploración de nuevas partes del grafo (similar a un paseo de profundidad primero, DFS) y la explotación de áreas cercanas al nodo inicial (similar a un paseo de amplitud primero, BFS). El parámetro $p$ controla la probabilidad de regresar al nodo anterior, y $q$ ajusta la probabilidad de visitar nodos más alejados.
 
-\subsection{Introducción}
+Optimización de la Representación: Una vez generadas las trayectorias, node2vec aplica técnicas de aprendizaje no supervisado similares a las usadas en el procesamiento de lenguaje natural, como Skip-gram, para optimizar los vectores de los nodos. El objetivo es maximizar la probabilidad de co-ocurrencia de nodos que están cerca en las trayectorias generadas.
+
+De esta manera, node2vec logra capturar tanto la estructura local como global del grafo, produciendo representaciones vectoriales útiles para tareas posteriores como la clasificación de nodos, detección de comunidades y predicción de enlaces.
+
+\subsubsection{NetworkX}
+NetworkX es un paquete de Python para la creación, manipulación y estudio de la estructura, dinámica y funciones de redes complejas. Es ampliamente utilizado en investigación y aplicaciones prácticas debido a su versatilidad y facilidad de uso. NetworkX permite trabajar con grafos (redes) de cualquier tamaño y tipo, incluidos grafos dirigidos, no dirigidos y multigrafos. Ofrece una amplia gama de algoritmos para análisis de redes, como medidas de centralidad, detección de comunidades, algoritmos de búsqueda de caminos, y más. Además, se integra bien con otras bibliotecas científicas de Python, como NumPy, SciPy y Matplotlib, facilitando el análisis y visualización de datos de redes.
+
+\subsubsection{UMAP}
+UMAP, Uniform Manifold Approximation and Projection, es un algoritmo de reducción de dimensionalidad no lineal que destaca por su eficiencia y habilidad para preservar las estructuras y relaciones locales en datos de alta dimensión. A través de la construcción de un grafo ponderado basado en la conectividad local de los puntos en el espacio de alta dimensión, UMAP busca optimizar una representación en un espacio de menor dimensión que conserve estas relaciones. Su capacidad para capturar estructuras complejas y no lineales, combinada con su eficaz preservación de la estructura global y local de los datos, lo convierte en una herramienta poderosa para visualizar y explorar conjuntos de datos grandes y complejos, haciéndolo especialmente relevante en campos como la ciencia de datos y el aprendizaje automático.
+
+\subsection{Pregunta a responder}
+Durante la etapa inicial de revisión de literatura relacionada con la temática, percibimos, por lo expuesto en éstas, una notable carencia de investigación exhaustiva sobre el análisis de comunidades en Ethereum. En general, los estudios más completos y con mejores resultados se han desarrollado predominantemente sobre la blockchain de Bitcoin.
+
+Al inicio de nuestra investigación, surgió la idea de analizar el comportamiento de los usuarios en la red de Ethereum en relación con el cambio de protocolo de consenso implementado en septiembre de 2022.
+
+Como mencionamos previamente, este cambio introduce una diferencia tanto técnica como teórica en el proceso de aprobación de nuevos bloques de transacciones dentro de la red.
+
+Dicha diferencia podría ser un factor motivador en la modificación del comportamiento de los usuarios que utilizan la red diariamente para realizar acuerdos o transferencias de activos.
+
+Por lo tanto, la pregunta principal que se busca responder en este trabajo es: ¿Realmente se produjo un cambio en la composición de las comunidades? ¿Cómo ha impactado este cambio en el uso de la blockchain de Ethereum, considerando que el nuevo protocolo permite (y además fomenta) una mayor participación general de los usuarios en la comunidad?
+
+\subsection{Resultado esperado}
+Para responder a las preguntas planteadas, es necesario desarrollar una serie de conceptos que abarquen desde la formulación de nuestro propio concepto de comunidad hasta los métodos para identificarlas.
+
+En este estudio, al igual que en muchos de los trabajos previamente revisados, se considerará a priori como característica principal de la relación entre dos nodos, la cantidad de transacciones entre ellos. Esta relación puede no ser simétrica y, si es necesario, podríamos incluir otros datos transaccionales que aporten valor a la hora de definir la importancia de la misma.
+
+Con base en esta relación, se buscará identificar comunidades en las que las interacciones entre dos o más nodos pertenecientes a la misma comunidad sean más significativas que las interacciones con nodos externos a dicha comunidad.
+Cabe mencionar que la definición de comunidades puede ser difusa, dependiendo del concepto inicial de comunidad, del método de definición y de la naturaleza del problema. Además, adherimos a la idea presentada en la literatura revisada, de que un nodo no necesariamente debe pertenecer a una comunidad. Si pertenece, es a una única comunidad, pero podría no estar en ninguna debido a la baja calidad de sus relaciones con otros nodos de la red.
+
+Con esto en mente, se propone analizar cualitativa y cuantitativamente las comunidades detectadas y su composición, en un periodo de tiempo determinado, antes y después de la implementación del cambio al protocolo de consenso Proof of Stake.
+
+Para comprender mejor el problema, es esencial conocer los datos, lo que permitirá formular preguntas más específicas y refinar las hipótesis a medida que se analicen los datos y, consecuentemente, las comunidades.
+Finalmente, todo esto contribuirá a construir un método para agrupar distintos nodos en un grafo de transacciones de Ethereum, permitiendo identificar sus comunidades.
+
+
+\section{Metodología}
+
+\subsection{Análisis exploratorio}
 
 Una vez conseguidos los datos, debíamos empezar a analizar los mismos, con el fin de conocer mejor los datos, su evolución y en base a eso tomar la decisión de que subset de datos pre y post cambio de protocolo de consenso vamos a elegir para la comparación final.
 
