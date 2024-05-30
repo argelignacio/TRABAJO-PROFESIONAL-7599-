@@ -11,7 +11,8 @@
 \usepackage{nicefrac}       % compact symbols for 1/2, etc.
 \usepackage{microtype}      % microtypography
 \usepackage{cleveref}       % smart cross-referencing
-\usepackage{lipsum}         % Can be removed after putting your text content
+\usepackage{lipsum} 
+\usepackage{wrapfig}        % Can be removed after putting your text content
 \usepackage{graphicx}
 \usepackage{natbib}
 \usepackage{doi}
@@ -232,8 +233,123 @@ Finalmente, todo esto contribuirá a construir un método para agrupar distintos
 
 Una vez conseguidos los datos, debíamos empezar a analizar los mismos, con el fin de conocer mejor los datos, su evolución y en base a eso tomar la decisión de que subset de datos pre y post cambio de protocolo de consenso vamos a elegir para la comparación final.
 
-Para esto, decidimos plantear una serie de métricas 
+Para esto, decidimos plantear una serie de métricas:
+\begin{itemize}
+    \item Cantidad de nodos
+    \item Cantidad de transacciones 
+    \item Gas
+    \item Value
+    \item Grados de los nodos (in/out)
+    \item Pagerank
+    \item Métricas calculadas mediante el algoritmo HITS
+\end{itemize}
+Todas estas métricas se calcularon para los años 2022 y 2023 de forma agregada por semana. Las agregaciones ploteadas en este caso son mínimo, máximo, media y desviación estándar.
 
+Usando esto nos apoyamos para un análisis exploratorio y la toma de la decisión de en qué ventana de tiempo nos íbamos a centrar.
+\newpage
+\subsection{Análisis de transacciones}
+En el siguiente gráfico se presenta la evolución diaria de la cantidad de transacciones desde enero de 2020 hasta finales de 2023. Se señala el lanzamiento de la versión de Proof of Stake y se marcan con una línea negra punteada los periodos que se analizarán. Hemos seleccionado estos intervalos para mantener la estacionalidad temporal, ya que corresponden a la misma época del año, pero con un cambio en el protocolo. Esto nos permite comparar principalmente el comportamiento de los usuarios frente al nuevo protocolo en comparación con el de Proof of Work.
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.7\textwidth]{time_serie_trx_dia.png} % Ajusta el ancho según sea necesario
+    \caption{Evolución con media móvil de la cantidad de transacciones por dia.}
+    \label{fig:ejemplo}
+\end{figure}
+
+Una vez elegidos los intervalos, procedemos a compararlos analiticamente mediante el uso de las métricas previamente nombradas.
+
+
+
+\begin{wrapfigure}{l}{0.65\textwidth} % 'R' para la derecha, 0.4\textwidth para el ancho de la figura
+    \centering
+    
+    \includegraphics[width=0.3\textwidth]{mean_trx_2_periodos.png} % Ajusta el ancho según sea necesario
+    \caption{Promedio transacciones totales.}
+    \label{fig:ejemplo}
+\end{wrapfigure}
+
+Este gráfico presenta la evolución del promedio de transacciones (in+out) por nodo activo por día para ambos periodos. 
+
+En conjunto con lo observado en el gráfico de la cantidad de transacciones diarias, se evidencia que, en el periodo de 2022, hay un incremento en la cantidad total de transacciones hacia el final del periodo, mientras que el promedio de transacciones por nodo disminuye. Esto sugiere una centralización de la red al final de este periodo, muy probablemente debido a factores externos, como noticias y fluctuaciones en el precio.
+
+
+
+Continuando con el análisis de estos periodos, observamos en los gráficos de la desviación estándar que los valores son significativamente superiores en órdenes de magnitud a los de la media. Esto indica que, aunque la media se aproxima a 1, la desviación estándar es elevada, lo que sugiere la existencia de numerosos casos en los que la cantidad de transacciones, tanto recibidas como enviadas, es exorbitante. 
+
+
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.7\textwidth]{std_recibidos.png} % Ajusta el ancho según sea necesario
+    \caption{Evolución del desvió estándar para transacciones recibidas.}
+    \label{fig:ejemplo}
+\end{figure}
+
+Este gráfico respalda la hipótesis de que, a finales de julio, la red experimentó una centralización, evidenciada por un valor atípico en la desviación estándar de la cantidad de transacciones recibidas. Esto sugiere que algunos nodos concentraron una proporción significativa de las transacciones realizadas como destinatarios.
+
+En el caso de las transacciones realizadas, se observa un valor considerablemente más bajo en general para las desviaciones. Esto podría indicar que la realización de transacciones es mucho más homogénea que la recepción de las mismas. Sin embargo, se observa un pico en la desviación de las transacciones realizadas el 10 de junio de 2023. 
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.7\textwidth]{std_enviados.png} % Ajusta el ancho según sea necesario
+    \caption{Evolución del desvió estándar para transacciones realizadas.}
+    \label{fig:ejemplo}
+\end{figure}
+Como último aspecto a destacar del gráfico de desviación en transacciones realizadas, se puede observar que la desviación promedio disminuyó, pasando de aproximadamente 50 a un poco más de 25. Esto también indica una homogeneización en la red tras el cambio de protocolo.
+
+\subsection{Gephi}
+El análisis exploratorio de datos es una fase crucial en la investigación y comprensión de estructuras complejas, como las redes transaccionales. En este contexto Gephi, un software de visualización de redes, permite representar de manera gráfica y comprensible la composición y dinámica de las redes.
+
+Gephi funciona mediante la manipulación de datos de red, donde los nodos representan address de wallet y las aristas reflejan las transacciones entre ellas. Para llevar a cabo esta representación visual, Gephi ofrece una variedad de algoritmos de posicionamiento de nodos en el espacio visual, lo que facilita la identificación de patrones, comunidades y centralidades dentro de la red.
+
+Estos algoritmos utilizan técnicas de optimización y modelado matemático para distribuir los nodos de manera óptima en el espacio visual, teniendo en cuenta diversas métricas y atributos de la red, como la distancia entre nodos, la fuerza de las relaciones y la distribución de la densidad de conexiones.
+
+Al emplear Gephi en nuestro análisis exploratorio, hemos optado por aprovechar estas funcionalidades para obtener una representación visual clara y significativa de la composición de la red en cuestión. Esta herramienta nos permite no solo visualizar la red en su totalidad, sino también explorar detalles específicos, identificar subgrupos o comunidades y detectar patrones emergentes que podrían pasar desapercibidos en un análisis puramente estadístico.
+
+
+A continuación, exponemos ejemplos visualizados utilizando esta herramienta, acompañados de los supuestos y cuestionamientos que suscitaron.
+
+Como prueba inicial, optamos por representar visualmente un grafo conformado por los nodos que han participado en más de 10 transacciones enviadas o recibidas durante el periodo comprendido entre mayo y junio de 2022. Esta selección se justifica debido a que la cantidad de nodos involucrados en la red torna impracticable su visualización sin un filtrado previo. Para esta prueba utilizamos Force Atlas 2, debido a su rápida convergencia, aun con data extensa.
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.7\textwidth]{gephi1.png} % Ajusta el ancho según sea necesario
+    \caption{Visualización de transacciones utilizando Gephi con Force Atlas 2.}
+    \label{fig:ejemplo}
+\end{figure}
+
+\section{Modelos}
+
+\subsection{Introducción}
+
+Dada la investigación hecha al inicio del trabajo, nos dimos cuenta que una buena aproximación para atacar el problema es generar embeddings y sobre estos, ejecutar algoritmos de clustering.
+Esta forma de proceder dio buenos resultados en varios de los papers analizados previamente, pero con varias limitaciones de procesamiento. Una primera aproximación fue hacer uso de modelos como node2vec, el cual trabaja generando embeddings de nodo teniendo en cuenta las relaciones que tiene con los demás agentes en la red, y sobre el resultado obtenido intentar hacer clustering como kmeans o hdbscan o simplemente utilizar algoritmos de búsqueda de comunidades como lo es Louvain o Infomap. Esto nos dio buenos resultados en el proceso de análisis pero rápidamente nos limitó para escalar la solución a varios días de transacciones que es necesario para intentar detectar comunidades en ventanas temporales no tan pequeñas. Para solucionar este problema intentamos generar embeddings de una forma robusta y escalable sin que ésta dependiera directamente de una limitación de hardware. Es así que iniciamos el desarrollo de un modelo de Deep Learning que genere los embeddings en reemplazo de node2vec, salvando las limitaciones previamente mencionadas.
+
+\subsection{Heurística para el filtrado de datos}
+Utilizamos cierto filtrado en los datos, para poder evitar aquellas transacciones más aisladas que nos podrían traer cierto ruido a los modelos. El filtrado fue por un mínimo de transacciones, el cual tiene en cuenta para cada nodo tanto las transacciones de remitente como las de destinatario. Este mínimo lo obtuvimos de la siguiente manera:
+
+Dada la porción de datos a analizar, calculamos la cantidad total de transacciones para cada nodo. Luego, dado un porcentaje (entre 0 y 1) y el total de transacciones, se calcula un umbral con el cual buscamos el máximo de transacciones de los nodos que se encuentran debajo de este umbral. En otras palabras, buscamos la máxima cantidad de transacciones de los nodos que se encuentran debajo de un porcentaje del total de transacciones.
+
+Finalmente, este máximo que obtenemos será utilizado como valor mínimo para eliminar aquellas transacciones que tengan menos de esta cantidad de transacciones.
+
+\subsection{Uso de \textit{representation learning} sobre la red}
+En el camino de búsqueda de comunidades, un camino a desarrollar es aplicar algoritmos de representation learning para generar un espacio vectorial que mantenga las propiedades relacionales que presenta la red originalmente.
+
+Inicialmente decidimos hacer una primera prueba de concepto utilizando node2vec en base a los relativos buenos resultados expuestos en los trabajos previamente analizados. Para este caso en particular, nosotros generamos el grafo de transacciones, con una ventana de tiempo, utilizando NetworkX. Con este grafo, ejecutamos node2vec con el fin de tener estas representaciones para cada nodo con participación activa durante este periodo.
+
+Los primeros resultados fueron satisfactorios, nos permitieron generar embeddings de algunos pocos días con un tiempo de procesamiento considerable para poder analizar una muestra inicial pequeña del comportamiento de los nodos de la red, tal como se vio en varios de los trabajos analizados en la primera instancia.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.3\textwidth]{umapn2v.png} % Ajusta el ancho según sea necesario
+    \caption{Visualización de transacciones utilizando Gephi con Force Atlas 2.}
+    \label{fig:ejemplo}
+\end{figure}
+Se adjunta un ejemplo de ejecución para 12 horas de transacciones ($\sim 500.000$ transacciones) visualizada mediante la representación comprimida resultante del algoritmo UMAP.
+
+
+Las limitaciones aparecieron cuando quisimos aumentar el tamaño de esa ventana temporal para poder analizar varios días de transacciones, siendo que node2vec hace uso intensivo de la memoria de la máquina en la que se está corriendo. Por ejemplo, hicimos una prueba con 2 días (1 y 2 de marzo de 2022) y el algoritmo no llegó a un resultado satisfactorio por una deficiencia en el uso de la memoria.
+
+\section{Proceso de validación}
 
 
 \bibliographystyle{alpha}
