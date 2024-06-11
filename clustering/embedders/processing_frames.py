@@ -53,7 +53,7 @@ class ProcessingFrames:
         self.logger.debug("Generator created")
         return generator
 
-    def pipeline(self, config, pending_model):
+    def pipeline(self, config, pending_model=None):
         cleaned_df = self._clean_nodes()
         min_transactions = self._search_max_transaccions_below_percentage(cleaned_df)
         # filtered_df = self._filter_nodes_per_min_transactions(cleaned_df, min_transactions + 1)
