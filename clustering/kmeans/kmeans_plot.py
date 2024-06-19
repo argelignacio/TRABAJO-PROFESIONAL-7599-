@@ -41,7 +41,7 @@ class Kmeans():
         plt.savefig(self.file_management.join_path(f'elbow_method_{method}.png'))
 
 
-    def plot_kmeans(self, embedding_custom, nodes_labels, method):
+    def plot_kmeans(self, embedding_custom, nodes_labels, method, ids):
         plt.figure(figsize=(10, 6))
         plt.scatter(embedding_custom.embedding_[:, 0], embedding_custom.embedding_[:, 1], alpha=0.4, c=nodes_labels.kmeans, cmap='viridis')
         plt.gca().set_aspect('equal', 'datalim')
@@ -71,7 +71,7 @@ class Kmeans():
         # self.plot_elbow(embedding, method)
         nodes_labels = self.kmeans_fit(embedding, ids, method)
         self.file_management.save_df(name_csv, nodes_labels)
-        self.plot_kmeans(embedding_reduced, nodes_labels, method)
+        self.plot_kmeans(embedding_reduced, nodes_labels, method, ids)
         return nodes_labels
     
     def run(self, method):

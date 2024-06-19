@@ -22,17 +22,17 @@ class GeneratorFakeGraph:
             for cluster_id in range(n_clusters):
                 cluster = [(str(uuid.uuid4()), cluster_id) for _ in range(int(nodes_per_cluster[cluster_id]))]
                 clusters.append(cluster)
-
-            if floating_nodes_proportion > 0:
-                floating_count = int(n_clusters * n_nodes_per_cluster * floating_nodes_proportion)
+            
+            floating_count = int(n_clusters * n_nodes_per_cluster * floating_nodes_proportion)
+            if floating_nodes_proportion > 0:  
                 noise_nodes =  [[(str(uuid.uuid4()), -1) for _ in range(floating_count)]]
                 clusters = clusters + noise_nodes
                 nodes_per_cluster.append(floating_count)
             
             data = []
             timestamp = 0
-            for _ in range(n_transactions):
-                if random.random() < floating_nodes_proportion:
+            for _ in range(n_transactions): 
+                if random.random() < (floating_count/(n_clusters * n_nodes_per_cluster+floating_count)):
                     cluster_aux = random.randint(0, n_clusters)
                     if random.random() < 0.5:
                         id_1 = clusters[cluster_aux][int(random.random() * (int(nodes_per_cluster[cluster_aux])))]

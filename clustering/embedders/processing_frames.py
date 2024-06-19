@@ -53,19 +53,22 @@ class ProcessingFrames:
         self.logger.debug("Generator created")
         return generator
 
-    def pipeline(self, config, pending_model):
+    def pipeline(self, config, pending_model=None, POC=True):
         cleaned_df = self._clean_nodes()
-        min_transactions = self._search_max_transaccions_below_percentage(cleaned_df)
-        # filtered_df = self._filter_nodes_per_min_transactions(cleaned_df, min_transactions + 1)
-        filtered_df = self._filter_per_transactions(cleaned_df, 0.2)
+        if not POC:
+            # min_transactions = self._search_max_transaccions_below_percentage(cleaned_df)
+            # filtered_df = self._filter_nodes_per_min_transactions(cleaned_df, min_transactions + 1)
+            cleaned_df = self._filter_per_transactions(cleaned_df, 0.2)
+            addresses_ids = self._create_ids(cleaned_df)
 
-        addresses_ids = self._create_ids(filtered_df)
+        else:
+            addresses_ids = self._create_ids(cleaned_df)
 
         self.logger.debug("Creating model")
         model_v2_config = config["MODEL_V2"]
         model = ModelBuilder(addresses_ids, EuclideanLoss, Adam, self.logger, model_v2_config)
-        
-        generator = self._create_generator(filtered_df, addresses_ids, config)
+
+        generator = self._create_generator(cleaned_df, addresses_ids, config)
         embeddings = model.compile_model().fit(generator, pending_model).get_embeddings()
         return embeddings, addresses_ids
     

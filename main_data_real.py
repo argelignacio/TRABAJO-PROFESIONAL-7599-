@@ -19,7 +19,7 @@ def start(config, logger, folder_name, pending_model=False):
     ]
 
     processing_frames = ProcessingFrames.build_from_files(files, logger)
-    embedding_matrix, ids = processing_frames.pipeline(config, pending_model)
+    embedding_matrix, ids = processing_frames.pipeline(config, pending_model, POC=False)
 
     file_management.save_npy("embedding_matrix.npy", embedding_matrix[0])
     logger.debug(f"Saved file embedding_matrix.npy")
