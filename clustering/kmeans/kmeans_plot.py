@@ -76,7 +76,7 @@ class Kmeans():
     
     def run(self, method):
         if method == "Custom Embedder":
-            return self.run_kmeans(method, "embedding_matrix.npy", "kmeans_custom.csv")
+            return self.run_kmeans(method, "embedding_matrix_{}.npy".format(self.config["MODEL_V2"]["embedding_dim"]), "kmeans_custom.csv")
         elif method == "Node2Vec":
             return self.run_kmeans(method, "node2vec_embedding_matrix.npy", "kmeans_node2vec.csv")
         else:

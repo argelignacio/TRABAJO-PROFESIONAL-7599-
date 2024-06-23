@@ -14,12 +14,24 @@ class Executor:
         self.config = config
         self.file_management = file_management
 
+    def _calculate_embedding_sizes(self):
+        model_config = self.config["MODEL_V2"]
+        current_embedding_size = int(model_config["embedding_dim"])
+        embedding_sizes = []
+        while current_embedding_size >= 2:
+            embedding_sizes.append(current_embedding_size)
+            current_embedding_size = current_embedding_size // 2
+        return embedding_sizes
+
+
     def _custom_embedding(self):
         processing_frames = ProcessingFrames.build_from_df(self.df, self.logger)
-        embedding_matrix, ids = processing_frames.pipeline(self.config)
-
-        self.file_management.save_npy("embedding_matrix.npy", embedding_matrix[0])
-        self.logger.debug(f"Saved file embedding_matrix.npy")
+        for embedding_size in self._calculate_embedding_sizes():
+            config = pkl.loads(pkl.dumps(self.config))
+            config["MODEL_V2"]["embedding_dim"] = str(embedding_size)
+            embedding_matrix, ids = processing_frames.pipeline(config)
+            self.file_management.save_npy(f"embedding_matrix_{embedding_size}.npy", embedding_matrix[0])
+            self.logger.debug(f"Saved file embedding_matrix_{embedding_size}.npy")
         self.file_management.save_pkl("ids.pkl", ids)
         self.logger.debug(f"Saved file ids.pkl")
 

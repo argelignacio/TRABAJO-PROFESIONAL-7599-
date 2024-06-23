@@ -96,6 +96,7 @@ def main(config, logger, folder_name):
     hdbscan_processor = Hdbscan(logger, config, file_management)
     nodes_labels_custom_hdbscan = hdbscan_processor.run("Custom Embedder")
     nodes_labels_node2vec_hdbscan = hdbscan_processor.run("Node2Vec")
+    nodes_labels_umap_hdbscan = hdbscan_processor.run("Umap")
 
     louvain_processor = Louvain(logger, config, file_management)
     df_labels_louvain = louvain_processor.run(df)
@@ -103,8 +104,8 @@ def main(config, logger, folder_name):
     clusters = dict()
     df.apply(lambda x: set_clusters(x, clusters), axis=1)
     
-    dfs = [nodes_labels_custom_hdbscan, nodes_labels_node2vec_hdbscan, nodes_labels_custom_kmeans, nodes_labels_node2vec_kmeans, df_labels_louvain]
-    methods = ['hdbscan_custom', 'hdbscan_node2vec', 'kmeans_custom', 'kmeans_node2vec', 'louvain']
+    dfs = nodes_labels_custom_hdbscan + [nodes_labels_umap_hdbscan, nodes_labels_node2vec_hdbscan, nodes_labels_custom_kmeans, nodes_labels_node2vec_kmeans, df_labels_louvain]
+    methods = ["hdbscan_custom_{}".format(2 ** (len(nodes_labels_custom_hdbscan) - i)) for i in range(len(nodes_labels_custom_hdbscan))] + ['hdbscan_umap', 'hdbscan_node2vec', 'kmeans_custom', 'kmeans_node2vec', 'louvain']
 
     for_df = {}
     for i in range(len(dfs)):

@@ -29,7 +29,7 @@ class Hdbscan():
         return embeddings_reduced
 
 
-    def plot_hdbscan(self, embedding, nodes_labels, method):
+    def plot_hdbscan(self, embedding, nodes_labels, method, custom_embedding_matrix=None):
         plt.figure(figsize=(10, 6))
 
         cmap_colors = ['gray'] + [colors.to_hex(plt.cm.viridis(i)) for i in range(len(nodes_labels.hdbscan) - 1)]
@@ -41,7 +41,10 @@ class Hdbscan():
 
         plt.gca().set_aspect('equal', 'datalim')
         plt.title(f'HDBSCAN: {method}')
-        plt.savefig(self.file_management.join_path(f'hdbscan_{method}.png'))
+        if custom_embedding_matrix:
+            plt.savefig(self.file_management.join_path(f'hdbscan_{custom_embedding_matrix}.png'))
+        else:
+            plt.savefig(self.file_management.join_path(f'hdbscan_{method}.png'))
 
 
     def hdbscan_fit(self, embedding_matrix, ids, method):
@@ -55,14 +58,36 @@ class Hdbscan():
     def run_hdbscan(self, method, name_npy, name_csv):
         embedding, ids = self.read_files(name_npy)
         embedding_reduced = self.get_embedding(embedding, method)
-        nodes_labels = self.hdbscan_fit(embedding, ids, method)
+        if method == "Umap":
+            nodes_labels = self.hdbscan_fit(embedding_reduced.embedding_, ids, method)
+        else:
+            nodes_labels = self.hdbscan_fit(embedding, ids, method)
         self.file_management.save_df(name_csv, nodes_labels)
-        self.plot_hdbscan(embedding_reduced, nodes_labels, method)
+        if method == "Umap":
+            self.plot_hdbscan(embedding_reduced, nodes_labels, method)
+        else:
+            self.plot_hdbscan(embedding_reduced, nodes_labels, method, custom_embedding_matrix=name_npy.split('.')[0])
         return nodes_labels
     
+    def _calculate_embedding_sizes(self):
+        model_config = self.config["MODEL_V2"]
+        current_embedding_size = int(model_config["embedding_dim"])
+        embedding_sizes = []
+        while current_embedding_size >= 2:
+            embedding_sizes.append(current_embedding_size)
+            current_embedding_size = current_embedding_size // 2
+        return embedding_sizes
+
+
     def run(self, method):
         if method == "Custom Embedder":
-            return self.run_hdbscan(method, "embedding_matrix.npy", "hdbscan_custom.csv")
+            dfs = []
+            for embedding_size in self._calculate_embedding_sizes():
+                dfs.append(self.run_hdbscan(method, f"embedding_matrix_{embedding_size}.npy", f"hdbscan_custom_{embedding_size}.csv"))
+            return dfs
+        if method == "Umap":
+            embedding_size = int(self.config["MODEL_V2"]["embedding_dim"])
+            return self.run_hdbscan(method, f"embedding_matrix_{embedding_size}.npy", f"hdbscan_custom_{embedding_size}.csv")
         elif method == "Node2Vec":
             return self.run_hdbscan(method, "node2vec_embedding_matrix.npy", "hdbscan_node2vec.csv")
         else:
