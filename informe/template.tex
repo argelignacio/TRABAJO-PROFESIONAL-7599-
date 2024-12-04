@@ -1,0 +1,230 @@
+\documentclass{article}
+
+\usepackage{arxiv}
+
+\usepackage[utf8]{inputenc} % allow utf-8 input
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage{hyperref}       % hyperlinks
+\usepackage{url}            % simple URL typesetting
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{microtype}      % microtypography
+\usepackage{cleveref}       % smart cross-referencing
+\usepackage{lipsum}         % Can be removed after putting your text content
+\usepackage{graphicx}
+\usepackage{natbib}
+\usepackage{doi}
+
+\title{Análisis comparativo de comunidades en Ethereum: de PoW a PoS}
+
+% Here you can change the date presented in the paper title
+%\date{Abril 9, 2024}
+% Or remove it
+\date{}
+
+\newif\ifuniqueAffiliation
+% Comment to use multiple affiliations variant of author block 
+\uniqueAffiliationtrue
+
+\ifuniqueAffiliation % Standard variant of author block
+\author{{
+	\hspace{1mm}Ignacio Argel} \\
+	FIUBA\\
+	\texttt{iargel@fi.uba.ar} \\
+	%% examples of more authors
+	\And
+	{\hspace{1mm}Manuel V.~Battan} \\
+	FIUBA\\
+	\texttt{mvbattan@fi.uba.ar} \\
+	\AND
+	{\hspace{1mm}Lucas Bilo} \\
+	FIUBA\\
+	\texttt{lbilo@fi.uba.ar} \\
+	\And
+	{\hspace{1mm}Nahuel H.~Spiguelman} \\
+	FIUBA\\
+	\texttt{nspiguelman@fi.uba.ar} \\
+	%% \AND
+	%% Coauthor \\
+	%% Affiliation \\
+	%% Address \\
+	%% \texttt{email} \\
+	%% \And
+	%% Coauthor \\
+	%% Affiliation \\
+	%% Address \\
+	%% \texttt{email} \\
+	%% \And
+	%% Coauthor \\
+	%% Affiliation \\
+	%% Address \\
+	%% \texttt{email} \\
+}
+\else
+% Multiple affiliations variant of author block
+\usepackage{authblk}
+\renewcommand\Authfont{\bfseries}
+\setlength{\affilsep}{0em}
+% box is needed for correct spacing with authblk
+\newbox{\orcid}\sbox{\orcid}{\includegraphics[scale=0.06]{orcid.pdf}} 
+\author[1]{%
+	\href{https://orcid.org/0000-0000-0000-0000}{\usebox{\orcid}\hspace{1mm}David S.~Hippocampus\thanks{\texttt{hippo@cs.cranberry-lemon.edu}}}%
+}
+\author[1,2]{%
+	\href{https://orcid.org/0000-0000-0000-0000}{\usebox{\orcid}\hspace{1mm}Elias D.~Striatum\thanks{\texttt{stariate@ee.mount-sheikh.edu}}}%
+}
+\affil[1]{Department of Computer Science, Cranberry-Lemon University, Pittsburgh, PA 15213}
+\affil[2]{Department of Electrical Engineering, Mount-Sheikh University, Santa Narimana, Levand}
+\fi
+
+% Uncomment to override  the `A preprint' in the header
+\renewcommand{\headeright}{}
+\renewcommand{\undertitle}{Trabajo Profesional}
+\renewcommand{\shorttitle}{Análisis comparativo de comunidades en Ethereum: de PoW a PoS}
+
+%%% Add PDF metadata to help others organize their library
+%%% Once the PDF is generated, you can check the metadata with
+%%% $ pdfinfo template.pdf
+\hypersetup{
+pdftitle={A template for the arxiv style},
+pdfsubject={q-bio.NC, q-bio.QM},
+pdfauthor={David S.~Hippocampus, Elias D.~Striatum},
+pdfkeywords={First keyword, Second keyword, More},
+}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+	El cambio de Proof of Work a Proof of Stake en la blockchain descentralizada de Ethereum tiene un 
+	impacto directo en la función desempeñada por los mineros, ya que son reemplazados por Stakers como nuevos validadores de la red. La disparidad en las dinámicas de este nuevo protocolo plantea interrogantes sobre si ha ocasionado modificaciones en el comportamiento de los usuarios que operan en él, ya sean stakers o participantes frecuentes de la red.\newline
+	Las investigaciones previas en Ethereum han priorizado aspectos técnicos, dejando un vacío en el análisis de interacciones entre cuentas y la formación de comunidades. Esto es especialmente notorio en la ausencia de estudios que aborden cómo el comportamiento de usuarios y comunidades ha cambiado con la migración de PoW a PoS.\\
+	Para este análisis utilizaremos un modelo cuya finalidad es crear embeddings de nodos que representen, de una manera inteligente, las relaciones entre addresses en la red. A su vez, este modelo es superador en términos de limitaciones computacionales y de utilización de features, que algoritmos tradicionales para analizar grafos no tienen en cuenta por defecto.\\
+\end{abstract}
+
+
+% keywords can be removed
+\keywords{ Ethereum \and Proof of Stake \and Proof of Work \and Networks \and Community Analysis \and Pattern Detection}
+
+
+\section{Introducción}
+La blockchain Ethereum ha sido una de las innovaciones más significativas en el mundo de la tecnología financiera en la última década. Desde su lanzamiento en 2015, Ethereum ha operado bajo un protocolo de consenso conocido como Proof of Work (PoW), el cual ha demostrado ser robusto y confiable en la validación de transacciones y la seguridad de la red, pero presentando problemas como el alto consumo de energía y la centralización de la minería de bloques. Debido a estos problemas, Ethereum ha migrado hacia el protocolo de consenso conocido como Proof of Stake (PoS), el cual incluye varios cambios en la manera de garantizar la integridad durante las transacciones, mejorando la escalabilidad y la eficiencia de la red.\newline
+Algunas preguntas significativas que surgen a partir del cambio de paradigma: ¿Existe un cambio en el comportamiento de los usuarios debido a esta transición? ¿Cuáles son los comportamientos invariantes o que siguen siendo vigentes después del cambio? ¿Cómo variaron las relaciones entre usuarios y comunidades? \newblock
+
+El presente proyecto tiene como objetivo principal contestar estas preguntas. A través de un análisis exhaustivo, buscamos proporcionar una visión clara de los patrones de comportamiento de quienes operan sobre la red de Ethereum en sus dos protocolos de consenso principales, PoW y PoS. Al hacerlo, esperamos contribuir a la comprensión de las implicaciones de esta transición para la comunidad Blockchain, los desarrolladores y los usuarios de Ethereum.
+
+
+\section{Representation learning sobre addresses de la red de Ethereum}
+\label{sec:headings}
+Las limitaciones con las que nos enfrentamos al utilizar distintos métodos de búsqueda de comunidades nos llevó a explorar otras opciones. Estas limitaciones estuvieron presentes tanto en el plano analitico, como en el computacional, ya que varias de las opciones exploradas, como Gephi, Node2Vec en conjunto con clustering o el algoritmo de Louvain no presentaban buena performance sobre una red tan grande y compleja. Por eso decidimos incursionar en el desarrollo de una red neuronal siamesa, cuyo objetivo sea encontrar la mejor representación de una address teniendo en cuenta su relación con los demás. 
+
+
+%See Section \ref{sec:headings}.
+
+\subsection{Triplet Loss personalizada}
+Para la generación de estos embeddings, empleamos una triplet loss, diseñada para calcular la distancia entre dos pares de embeddings de addresses: $d(Anchor, Positive)$ y $d(Anchor, Negative)$. 
+El anchor representa una address que ha realizado una o más transacciones cuyo destinatario es el positivo. Mientras que el negative representa una dirección que nunca ha sido ni emisor ni receptor en una transacción que involucre al anchor. \\ 
+De esta manera, a través del cálculo que involucra ambas distancias, la red neuronal se entrena para acercar el anchor al positive y alejarlo del negative, optimizando así la representación de las addresses en un espacio $N$-dimensional.
+\begin{equation}
+	{\mathcal {L}}\left(A,P,N\right)= {max} \left((\omega \cdot {\| \left(A_{e}\right)- \left(P_{e}\right)\|}_{2})-{\| \left(A_{e}\right)- \left(N_{e}\right)\|}_{2}+\alpha ,0\right)
+\end{equation}
+Como resultado, se espera que estos embeddings de N-dimensiones conserven una cantidad significativa de información contextual sobre la address y sus transacciones asociadas. Esto facilita la aplicación de algoritmos de clustering, con el objetivo de identificar conjuntos de direcciones altamente relacionadas entre sí.
+
+\subsubsection{Weight: factor ponderante}
+Dentro de la loss, $\omega$ es usado para relacionar el anchor y el positive con mayor intensidad en casos en los que las transacciones son muy recurrentes o de altos montos. Este se calcula de la siguiente manera:
+\begin{equation}
+	\omega = w_{\#Trx} \frac{|T_{AP}| - \mu_{|T|} }{\sigma_{|T|}} + w_{value} \frac{\overline{V}(T_{AP}) - \mu_{V(T)}}{\sigma_{V(T)}}
+\end{equation}
+Al ser una función creciente en cuanto a la cantidad de transacciones y al valor promedio por par, esto incrementa el valor resultante de la loss. Como consecuencia, la loss asigna un valor más alto a los pares donde el anchor y el positivo tienen un volumen, ya sea en cuanto cardinalidad o valor, mayor. Esto resulta en una mayor ganancia al acercarlos abruptamente, garantizando que estos pares altamente relacionados permanezcan espacialmente cercanos.
+
+
+
+
+
+\section{Examples of citations, figures, tables, references}
+\label{sec:others}
+
+\subsection{Citations}
+Citations use \verb+natbib+. The documentation may be found at
+\begin{center}
+	\url{http://mirrors.ctan.org/macros/latex/contrib/natbib/natnotes.pdf}
+\end{center}
+
+Here is an example usage of the two main commands (\verb+citet+ and \verb+citep+): Some people thought a thing \citep{kour2014real, keshet2016prediction} but other people thought something else \citep{kour2014fast}. Many people have speculated that if we knew exactly why \citet{kour2014fast} thought this\dots
+
+\subsection{Figures}
+\lipsum[10]
+See Figure \ref{fig:fig1}. Here is how you add footnotes. \footnote{Sample of the first footnote.}
+\lipsum[11]
+
+\begin{figure}
+	\centering
+	\fbox{\rule[-.5cm]{4cm}{4cm} \rule[-.5cm]{4cm}{0cm}}
+	\caption{Sample figure caption.}
+	\label{fig:fig1}
+\end{figure}
+
+\subsection{Tables}
+See awesome Table~\ref{tab:table}.
+
+The documentation for \verb+booktabs+ (`Publication quality tables in LaTeX') is available from:
+\begin{center}
+	\url{https://www.ctan.org/pkg/booktabs}
+\end{center}
+
+
+\begin{table}
+	\caption{Sample table title}
+	\centering
+	\begin{tabular}{lll}
+		\toprule
+		\multicolumn{2}{c}{Part}                   \\
+		\cmidrule(r){1-2}
+		Name     & Description     & Size ($\mu$m) \\
+		\midrule
+		Dendrite & Input terminal  & $\sim$100     \\
+		Axon     & Output terminal & $\sim$10      \\
+		Soma     & Cell body       & up to $10^6$  \\
+		\bottomrule
+	\end{tabular}
+	\label{tab:table}
+\end{table}
+
+\subsection{Lists}
+\begin{itemize}
+	\item Lorem ipsum dolor sit amet
+	\item consectetur adipiscing elit.
+	\item Aliquam dignissim blandit est, in dictum tortor gravida eget. In ac rutrum magna.
+\end{itemize}
+
+
+\bibliographystyle{unsrtnat}
+\bibliography{references}  %%% Uncomment this line and comment out the ``thebibliography'' section below to use the external .bib file (using bibtex) .
+
+
+%%% Uncomment this section and comment out the \bibliography{references} line above to use inline references.
+% \begin{thebibliography}{1}
+
+% 	\bibitem{kour2014real}
+% 	George Kour and Raid Saabne.
+% 	\newblock Real-time segmentation of on-line handwritten arabic script.
+% 	\newblock In {\em Frontiers in Handwriting Recognition (ICFHR), 2014 14th
+% 			International Conference on}, pages 417--422. IEEE, 2014.
+
+% 	\bibitem{kour2014fast}
+% 	George Kour and Raid Saabne.
+% 	\newblock Fast classification of handwritten on-line arabic characters.
+% 	\newblock In {\em Soft Computing and Pattern Recognition (SoCPaR), 2014 6th
+% 			International Conference of}, pages 312--318. IEEE, 2014.
+
+% 	\bibitem{keshet2016prediction}
+% 	Keshet, Renato, Alina Maor, and George Kour.
+% 	\newblock Prediction-Based, Prioritized Market-Share Insight Extraction.
+% 	\newblock In {\em Advanced Data Mining and Applications (ADMA), 2016 12th International 
+%                       Conference of}, pages 81--94,2016.
+
+% \end{thebibliography}
+
+
+\end{document}
